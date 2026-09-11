@@ -43,11 +43,13 @@ public:
     DEBUG("Counter: destructor closed\n");
   }
 
+  // TODO: getters and setters
+
   inline void print_counted() const {
     for (auto pair : pairs) {
         std::cout << pair.first << " - " << pair.second << std::endl;
     }
   }
 
-
+  // TODO: tokenization method
 };
