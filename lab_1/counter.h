@@ -6,13 +6,15 @@
 #include <utility>
 #include <vector>
 #include <unordered_map>
+
 #include "util.h"
 
 class Counter {
 private:
   std::ifstream input;
   std::stringstream buf_stream;
-  std::unordered_map<size_t, std::string> pairs;
+  std::vector<std::string> tokens;
+  std::unordered_map<std::string, std::size_t> pairs;
 
 public:
   inline Counter() { ERROR("No input file providen!\n"); }
