@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iosfwd>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -10,7 +11,7 @@
 class Counter {
 private:
   std::ifstream input;
-  std::stringstream buf;
+  std::stringstream buf_stream;
   std::unordered_map<size_t, std::string> pairs;
 
 public:
@@ -24,7 +25,16 @@ public:
       throw std::invalid_argument("Counter constructor, Given input is invalid!\n");
     }
     DEBUG("File %s successfuly opened\n", path.c_str());
-    buf << input.rdbuf();
+    // jump to the end of file
+    input.seekg(0, std::ios::end);
+    std::streampos len = input.tellg();
+    // jump to the end of file
+    input.seekg(0, std::ios::beg);
+    std::vector<char> buffer(len);
+    // read file to temporary buffer (faster than just .rdbuf() method according to StackOverflow)
+    input.read(&buffer[0], len);
+    // rdbuf returns pointer to file buffer
+    buf_stream.rdbuf()->pubsetbuf(&buffer[0], len);
     input.close();
     DEBUG("File %s successfully closed, and input sent to the buffer\n", path.c_str());
   }
