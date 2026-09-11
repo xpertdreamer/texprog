@@ -9,6 +9,8 @@
 
 #include "util.h"
 
+#define TEST 1 // 0/1
+
 class Counter {
 private:
   std::ifstream input;
@@ -38,7 +40,11 @@ public:
     // rdbuf returns pointer to file buffer
     buf_stream.rdbuf()->pubsetbuf(&buffer[0], len);
     input.close();
-    DEBUG("File %s successfully closed, and input sent to the buffer\n", path.c_str());
+    DEBUG("File %s successfully closed, and input sent to the buffer\n",
+          path.c_str());
+    #if TEST
+    std::cout << buf_stream.str();
+    #endif
   }
 
   inline ~Counter() {
@@ -54,4 +60,5 @@ public:
   }
 
   // TODO: tokenization method
+  bool tokenize();
 };
