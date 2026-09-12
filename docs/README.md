@@ -30,7 +30,10 @@ Remove build directory:
 
 List of targets:
 
-  - lab_1 — Laboratory Work №1
+  - lab1 — Laboratory Work №1
+
+> [!NOTE]
+> Make generates html-documentation on build
 
 ## Laboratory Work 1
 ### References:
