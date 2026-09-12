@@ -43,3 +43,4 @@ List of targets:
   - <https://man.archlinux.org/man/podman.1.en>
   - <https://intellipaat.com/blog/tokenizing-a-string-cpp/>
   - <https://stackoverflow.com/questions/10051679/c-tokenize-string>
+  - <https://stackoverflow.com/questions/51624933/how-exactly-do-lookup-tables-work-and-how-to-implement-them>
