@@ -12,7 +12,7 @@ Otherwise, if you have **Podman** on your machine, just run the container with t
     podman run --rm -it -v .:/app env:latest
 ```
 
-Then, run the [build script]() inside.
+Then, run the [build script](#make-commands) inside.
 
 ## Make commands
 
