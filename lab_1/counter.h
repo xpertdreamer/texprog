@@ -1,3 +1,8 @@
+/**
+ * @file counter.h
+ * @brief Word counter class for counting word occurrences in a file.
+ */
+
 #include <fstream>
 #include <iosfwd>
 #include <iostream>
@@ -11,17 +16,35 @@
 
 #define TEST 1 // 0/1
 
+/**
+ * @class Counter
+ * @brief Counts word occurrences in a given file
+ * This class reads a file into an internal buffer, tokenizes its content,
+ * and stores the frequency of each token in an unordered map.
+ */
 class Counter {
 private:
-  std::ifstream input;
-  std::stringstream buf_stream;
-  std::vector<std::string> tokens;
-  std::unordered_map<std::string, std::size_t> pairs;
+  std::ifstream input; ///<Input file stream
+  std::stringstream buf_stream; ///<Bufer holding content of the given file
+  std::vector<std::string> tokens; ///<Vector of tokens
+  std::unordered_map<std::string, std::size_t> pairs; ///<Map of word occurences
 
 public:
+  /**
+   * @brief Default constructor.
+   * Logs an error indicating that no input file was provided.
+   */
   inline Counter() { ERROR("No input file providen!\n"); }
 
-  inline Counter(std::string path) {
+  /**
+   * @brief Constructs a Counter and loads the file at path into the buffer.
+   * Opens the file, reads its entire contents into an internal buffer stream,
+   * and closes the file. If the file cannot be opened, an exception is thrown.
+   * @param path Path to the input file.
+   * @throws std::invalid_argument If the file cannot be opened.
+   * @note The file contents are stored in an internal std::stringstream.
+   */
+  inline Counter(const std::string& path) {
     DEBUG("PATH: %s\n", path.c_str());
     input.open(path);
     if (!input) {
@@ -47,12 +70,21 @@ public:
     #endif
   }
 
+  /**
+  * @brief Destructor.
+  * Logs a debug message when the object is destroyed.
+  */
   inline ~Counter() {
     DEBUG("Counter: destructor closed\n");
   }
 
   // TODO: getters and setters
 
+  /**
+  * @brief Prints all counted word pairs to standard output.
+  * Each line contains a word and its occurrence count, separated by '-'.
+  * @note This method does not modify the object state.
+  */
   inline void print_counted() const {
     for (auto pair : pairs) {
         std::cout << pair.first << " - " << pair.second << std::endl;
