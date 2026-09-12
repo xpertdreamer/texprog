@@ -14,7 +14,7 @@
 
 #include "util.h"
 
-#define TEST 1 // 0/1
+#define TEST 0 // 0/1
 
 /**
  * @class Counter
@@ -52,16 +52,8 @@ public:
       throw std::invalid_argument("Counter constructor, Given input is invalid!\n");
     }
     DEBUG("File %s successfuly opened\n", path.c_str());
-    // jump to the end of file
-    input.seekg(0, std::ios::end);
-    std::streampos len = input.tellg();
-    // jump to the end of file
-    input.seekg(0, std::ios::beg);
-    std::vector<char> buffer(len);
-    // read file to temporary buffer (faster than just .rdbuf() method according to StackOverflow)
-    input.read(&buffer[0], len);
-    // rdbuf returns pointer to file buffer
-    buf_stream.rdbuf()->pubsetbuf(&buffer[0], len);
+    // thats just works
+    buf_stream << input.rdbuf();
     input.close();
     DEBUG("File %s successfully closed, and input sent to the buffer\n",
           path.c_str());
@@ -91,6 +83,12 @@ public:
     }
   }
 
+  inline void print_tokens() const {
+    for (auto tok : tokens) {
+        std::cout << tok << std::endl;
+    }
+  }
+
   // TODO: tokenization method
-  bool tokenize();
+  void tokenize();
 };
