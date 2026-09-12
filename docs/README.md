@@ -41,3 +41,5 @@ List of targets:
   - <https://stackoverflow.com/questions/132358/how-to-read-file-content-into-istringstream>
   - <https://docs.podman.io/en/v1.6.4/markdown/podman-create.1.html>
   - <https://man.archlinux.org/man/podman.1.en>
+  - <https://intellipaat.com/blog/tokenizing-a-string-cpp/>
+  - <https://stackoverflow.com/questions/10051679/c-tokenize-string>
