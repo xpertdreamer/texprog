@@ -1,10 +1,15 @@
 #include "counter.h"
 #include <string>
 
+static bool is_capitalized() {
+    // TODO: check if first character is capital and replace with small one
+    return true;
+}
+
 void Counter::tokenize() {
   START(tokenize);
   DEBUG("Call tokenize\n");
-  const std::string delimiters = ")(\"\',.;!?: \t\n\r";
+  const std::string delimiters = "][)(\"\',.;!?:- \t\n\r";
   std::string token;
   bool is_del[256] = {false};
   for (unsigned char d : delimiters) is_del[d] = true;
