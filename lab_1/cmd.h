@@ -6,8 +6,10 @@
 #include <unordered_map>
 #include <vector>
 #include <iostream>
+#include <sstream>
 
 #include "counter.h"
+#include "stl.h"
 
 typedef struct {
     std::string name;
@@ -18,11 +20,7 @@ class CMD {
 private:
     bool quiet = false;
     char prompt = '$';
-    std::vector<Command> commands {
-    {"q", "Quiet mode", },
-    {"count", "Count every word occurence in the given file"},
-    {"index", "Index every word occurence in the give file"}
-    };
+    std::vector<Command> commands;
     std::unordered_map<std::string, std::function<void()>> handlers;
     Counter* counter_ref;
 
@@ -33,6 +31,10 @@ private:
         }
         std::cout << std::endl;
     }
+
+    std::vector<int> input_container();
+
+    void print_container(const std::vector<int>& container);
 
     inline void do_q() {
         std::cout << "Quite=" << quiet << std::endl;
@@ -47,14 +49,34 @@ private:
         if (quiet == false) counter_ref->print_indicies();
     }
 
+    inline void do_prime() {
+        std::vector<int> container = input_container();
+        DEBUG("Call primes\n");
+        primes(container);
+        print_container(container);
+    }
+
 public:
     CMD(Counter* counter) {
+        commands = {
+           {"q", "Quiet mode"},
+           {"count", "Count every word occurence in the given file"},
+           {"index", "Index every word occurence in the give file"},
+        };
         counter_ref = counter;
         counter_ref->tokenize();
         handlers["q"]     = [this]() { do_q(); };
         handlers["count"] = [this]() { do_count(); };
         handlers["index"] = [this]() { do_index(); };
     };
+    CMD() {
+        commands = {
+           {"q", "Quiet mode"},
+            {"primes", "Squaring prime numbers"},
+        };
+        handlers["q"]      = [this]() { do_q(); };
+        handlers["primes"] = [this]() { do_prime(); };
+    }
     ~CMD() = default;
     void parse_cmd();
 };
