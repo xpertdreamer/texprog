@@ -14,7 +14,7 @@ void CMD::parse_cmd() {
 }
 
 // TODO: trim
-std::vector<int> CMD::input_container() {
+std::vector<int> input_container() {
     std::vector<int> res;
     std::cout << "Enter numbers (separated by space): ";
     std::string raw;
@@ -26,7 +26,7 @@ std::vector<int> CMD::input_container() {
     return res;
 }
 
-void CMD::print_container(const std::vector<int>& container) {
+void print_container(const std::vector<int>& container) {
     std::cout << std::endl;
     for (const auto& element : container) std::cout << element << " ";
     std::cout << std::endl;

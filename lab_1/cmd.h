@@ -16,6 +16,24 @@ typedef struct {
     std::string description;
 } Command;
 
+std::vector<int> input_container();
+
+void print_container(const std::vector<int>& container);
+
+inline void do_prime() {
+    std::vector<int> container = input_container();
+    DEBUG("Call primes\n");
+    primes(container);
+    print_container(container);
+}
+
+inline void do_sort() {
+    std::vector<int> container = input_container();
+    DEBUG("Call sort\n");
+    sort(container);
+    print_container(container);
+}
+
 class CMD {
 private:
     bool quiet = false;
@@ -32,10 +50,6 @@ private:
         std::cout << std::endl;
     }
 
-    std::vector<int> input_container();
-
-    void print_container(const std::vector<int>& container);
-
     inline void do_q() {
         std::cout << "Quite=" << quiet << std::endl;
         quiet = !quiet;
@@ -47,13 +61,6 @@ private:
     inline void do_index() {
         counter_ref->index();
         if (quiet == false) counter_ref->print_indicies();
-    }
-
-    inline void do_prime() {
-        std::vector<int> container = input_container();
-        DEBUG("Call primes\n");
-        primes(container);
-        print_container(container);
     }
 
 public:
@@ -73,9 +80,11 @@ public:
         commands = {
            {"q", "Quiet mode"},
             {"primes", "Squaring prime numbers"},
+            {"sort", "Perform sorting"},
         };
         handlers["q"]      = [this]() { do_q(); };
-        handlers["primes"] = [this]() { do_prime(); };
+        handlers["primes"] = []() { do_prime(); };
+        handlers["sort"]   = []() { do_sort(); };
     }
     ~CMD() = default;
     void parse_cmd();
