@@ -34,22 +34,64 @@ void Counter::tokenize() {
   START(tokenize);
   DEBUG("Call tokenize\n");
   const std::string delimiters = "][)(\"\',.;!?:- \t\n\r";
-  std::string token;
   bool is_del[256] = {false};
   for (unsigned char d : delimiters) is_del[d] = true;
-  // i dont know if its valid to read char by char but its my maximum for now
+  std::string token;
   char c;
   while (buf_stream.get(c)) {
-      if (is_del[(unsigned char)c]) {
-    //if (delimiters.find(c) != std::string::npos) {
-      if (!token.empty()) {
-        tokens.emplace_back(token);
-        token.clear();
+      unsigned char uc = static_cast<unsigned char>(c);
+      if (is_del[uc]) {
+          if (!token.empty()) {
+              lower(token);
+              tokens.emplace_back(token);
+              token.clear();
+          }
       }
-    } else token += c;
+      // NOTE: russian quote-marks has two-bytes ASCII codes (D2 AB) and (C2 BB)
+      else if (uc == 0xC2 && (buf_stream.peek() == 0xAB || buf_stream.peek() == 0xBB)) {
+          buf_stream.get(c);
+          if (!token.empty()) {
+              lower(token);
+              tokens.emplace_back(token);
+              token.clear();
+          }
+      }
+      // NOTE: '...' = (E2 80 A6)
+      else if (uc == 0xE2) {
+          char next1 = buf_stream.peek();
+          if (static_cast<unsigned char>(next1) == 0x80) {
+              buf_stream.get(c);
+              if (static_cast<unsigned char>(buf_stream.peek()) == 0xA6) {
+                  buf_stream.get(c);
+                  if (!token.empty()) {
+                      lower(token);
+                      tokens.emplace_back(token);
+                      token.clear();
+                  }
+                  continue;
+              }
+              buf_stream.putback(next1);
+          }
+          token += c;
+      }
+      else token += c;
   }
   if (!token.empty()) {
-    tokens.emplace_back(token);
+      lower(token);
+      tokens.emplace_back(token);
   }
   END(tokenize);
+}
+
+void Counter::count() {
+  START(count);
+  DEBUG("Call count");
+  if (tokens.empty()) {
+      ERROR("No tokens to count providen");
+      return;
+  }
+  for (const auto& token : tokens) {
+      pairs[token]++;
+  }
+  END(count);
 }

@@ -78,6 +78,7 @@ public:
   * @brief Prints all counted word pairs to standard output.
   * Each line contains a word and its occurrence count, separated by '-'.
   * @note This method does not modify the object state.
+  * @note Use this on debug
   */
   inline void print_counted() const {
     for (auto pair : pairs) {
@@ -88,6 +89,7 @@ public:
   /**
   * @brief Prints all tokens collected by tokenize
   * @note This method does not modify the object state.
+  * @note Use this on debug
   */
   inline void print_tokens() const {
     if (tokens.empty()) {
@@ -99,5 +101,7 @@ public:
     }
   }
 
+
   void tokenize();
+  void count();
 };
