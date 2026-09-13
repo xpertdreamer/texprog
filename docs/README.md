@@ -44,3 +44,4 @@ List of targets:
   - <https://intellipaat.com/blog/tokenizing-a-string-cpp/>
   - <https://stackoverflow.com/questions/10051679/c-tokenize-string>
   - <https://stackoverflow.com/questions/51624933/how-exactly-do-lookup-tables-work-and-how-to-implement-them>
+  - <http://blog.kislenko.net/show.php?id=2045>
