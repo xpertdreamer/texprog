@@ -95,3 +95,19 @@ void Counter::count() {
   }
   END(count);
 }
+
+void Counter::index() {
+    START(index);
+    DEBUG("Call index\n");
+    if (tokens.empty()) {
+        ERROR("No tokens to index providen");
+        return;
+    }
+    size_t i = 0;
+    do {
+        const std::string& token = tokens[i];
+        indecies[token].emplace_back(i);
+        i++;
+    } while (i < tokens.size());
+    END(index);
+}

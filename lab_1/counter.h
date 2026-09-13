@@ -28,6 +28,7 @@ private:
   std::stringstream buf_stream; ///<Bufer holding content of the given file
   std::vector<std::string> tokens; ///<Vector of tokens
   std::unordered_map<std::string, std::size_t> pairs; ///<Map of word occurences
+  std::unordered_map<std::string, std::vector<size_t>> indecies; ///<Map of indecies of each word in file
 
 public:
   /**
@@ -86,6 +87,19 @@ public:
     }
   }
 
+  inline void print_indicies() const {
+    if (tokens.empty()) {
+      DEBUG("Vector of tokens is empty");
+      return;
+    }
+    for (auto tok : indecies) {
+        std::cout << tok.first << " - ";
+        for (size_t i = 0; i < tok.second.size(); ++i) {
+            std::cout << tok.second[i] << (i < tok.second.size() - 1 ? ", " : "\n");
+        }
+    }
+  }
+
   /**
   * @brief Prints all tokens collected by tokenize
   * @note This method does not modify the object state.
@@ -101,7 +115,7 @@ public:
     }
   }
 
-
   void tokenize();
   void count();
+  void index();
 };
