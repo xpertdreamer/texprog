@@ -14,6 +14,23 @@ Otherwise, if you have **Podman** on your machine, just run the container with t
 
 Then, run the [build script](#make-commands) inside.
 
+## Random generator
+
+The project root includes the `random.sh` script. It works on almost every Linux machine and generates 150 numbers in the range from 1 to 10000. 
+
+To use it, run:
+
+``` shell
+sh random.sh
+```
+
+or 
+
+``` shell
+chmod +x random.sh
+./random.sh
+```
+
 ## Make commands
 
 Build one target from list:
@@ -47,3 +64,4 @@ List of targets:
   - <http://blog.kislenko.net/show.php?id=2045>
   - <https://en.wikipedia.org/wiki/Prime_number>
   - <https://github.com/TheAlgorithms/C/blob/master/sorting/shell_sort.c>
+  - <https://unix.stackexchange.com/questions/140750/generate-random-numbers-in-specific-range>
