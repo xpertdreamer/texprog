@@ -18,6 +18,8 @@ typedef struct {
 
 std::vector<int> input_container();
 
+std::pair<int, int> input_range();
+
 void print_container(const std::vector<int>& container);
 
 inline void do_prime() {
@@ -31,6 +33,14 @@ inline void do_sort() {
     std::vector<int> container = input_container();
     DEBUG("Call sort\n");
     sort(container);
+    print_container(container);
+}
+
+inline void do_find() {
+    std::vector<int> container = input_container();
+    std::pair<int, int> range = input_range();
+    DEBUG("Call find\n");
+    container = find(container, range);
     print_container(container);
 }
 
@@ -78,13 +88,13 @@ public:
     };
     CMD() {
         commands = {
-           {"q", "Quiet mode"},
             {"primes", "Squaring prime numbers"},
             {"sort", "Perform sorting"},
+            {"find", "Find integers in given range"},
         };
-        handlers["q"]      = [this]() { do_q(); };
         handlers["primes"] = []() { do_prime(); };
         handlers["sort"]   = []() { do_sort(); };
+        handlers["find"]   = []() { do_find(); };
     }
     ~CMD() = default;
     void parse_cmd();
