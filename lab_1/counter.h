@@ -4,7 +4,7 @@
  */
 
 #include <fstream>
-#include <iosfwd>
+#include <ios>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -59,6 +59,8 @@ public:
           path.c_str());
     #if TEST
     std::cout << buf_stream.str();
+    buf_stream.clear();
+    buf_stream.seekg(0, std::ios::beg);
     #endif
   }
 
