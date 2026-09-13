@@ -1,3 +1,5 @@
+// TODO: documentation
+
 #ifndef COUNTER_H
 #define COUNTER_H
 
@@ -16,8 +18,7 @@
 #include <unordered_map>
 
 #include "util.h"
-
-#define TEST 0 ///<Use 1 to print file content after read
+#include "conf.h"
 
 /**
  * @class Counter

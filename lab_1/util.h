@@ -1,8 +1,12 @@
+// TODO: documentation
+
 #ifndef UTIL_H
 #define UTIL_H
 
 #include <chrono>
 #include <iostream>
+
+#include "conf.h"
 
 #ifndef _WIN32
 #define ERROR_COLOR "\e[1;31m"
@@ -14,10 +18,12 @@
 #define RESET_COLOR ""
 #endif
 
-#define DEBUG(fmt, ...)                                             \
-    do {                                                            \
-        fprintf(stdout, "%sDEBUG:%s ", DEBUG_COLOR, RESET_COLOR);   \
-        fprintf(stdout, fmt, ##__VA_ARGS__);                        \
+#define DEBUG(fmt, ...)                                                 \
+    do {                                                                \
+        if (DEBUG_MODE) {                                               \
+            fprintf(stdout, "%sDEBUG:%s ", DEBUG_COLOR, RESET_COLOR);   \
+            fprintf(stdout, fmt, ##__VA_ARGS__);                        \
+        }                                                               \
     } while (0)
 
 #define ERROR(fmt, ...)                                                 \

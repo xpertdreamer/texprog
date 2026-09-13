@@ -1,3 +1,5 @@
+// TODO: documentation
+
 #include "counter.h"
 #include <string>
 
