@@ -1,8 +1,11 @@
-// TODO: documentation
-
 #include "counter.h"
 #include <string>
 
+/**
+ * @brief Converts the first character of a token to lowercase.
+ * @details Handles ASCII and Cyrillic (UTF-8) characters in place. Only the first character is transformed.
+ * @param token String to modify. Empty input is ignored.
+ */
 static void lower(std::string& token) {
     if (token.empty()) return;
     unsigned char c1 = static_cast<unsigned char>(token[0]);

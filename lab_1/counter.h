@@ -77,8 +77,6 @@ public:
     DEBUG("Counter: destructor closed\n");
   }
 
-  // TODO: getters and setters
-
   /**
   * @brief Prints all counted word pairs to standard output.
   * Each line contains a word and its occurrence count, separated by '-'.
@@ -119,8 +117,25 @@ public:
     }
   }
 
+  /**
+  * @brief Tokenizes the buffered file contents.
+  *
+  * @details Splits the contents of @c buf_stream into tokens and stores them in the @c tokens vector for further processing.
+  */
   void tokenize();
+
+  /**
+   * @brief Counts the occurrences of each token.
+   *
+   * @details Fill the @c pairs map with each unique token and the number of times it appears in the file.
+   */
   void count();
+
+  /**
+   * @brief Builds an index of token positions.
+   *
+   * @details Fill the @c indecies map with each unique token and a vector of positions where it appears in the file.
+   */
   void index();
 };
 
