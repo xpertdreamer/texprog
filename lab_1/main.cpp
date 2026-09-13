@@ -1,4 +1,4 @@
-#include "counter.h"
+#include "cmd.h"
 #include <stdexcept>
 
 int main(int argc, char** argv) {
@@ -9,8 +9,8 @@ int main(int argc, char** argv) {
     try {
         const std::string path = *(argv+1);
         Counter counter(path);
-        counter.tokenize(); counter.index();
-        counter.print_indicies();
+        CMD cmd(&counter);
+        cmd.parse_cmd();
     }
     catch(std::invalid_argument & e) {
       ERROR("Error occured: %s", e.what());
