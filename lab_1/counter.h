@@ -14,7 +14,7 @@
 
 #include "util.h"
 
-#define TEST 0 // 0/1
+#define TEST 0 ///<Use 1 to print file content after read
 
 /**
  * @class Counter
@@ -85,7 +85,15 @@ public:
     }
   }
 
+  /**
+  * @brief Prints all tokens collected by tokenize
+  * @note This method does not modify the object state.
+  */
   inline void print_tokens() const {
+    if (tokens.empty()) {
+      DEBUG("Vector of tokens is empty");
+      return;
+    }
     for (auto tok : tokens) {
         std::cout << tok << std::endl;
     }
