@@ -85,7 +85,7 @@ void Counter::tokenize() {
 
 void Counter::count() {
   START(count);
-  DEBUG("Call count");
+  DEBUG("Call count\n");
   if (tokens.empty()) {
       ERROR("No tokens to count providen");
       return;
