@@ -33,6 +33,9 @@ chmod +x random.sh
 
 ## Make commands
 
+> [!NOTE]
+> Make generates html-documentation on build (/docs/html/index.html)
+
 Build one target from list:
 
 ``` shell
@@ -48,9 +51,6 @@ Remove build directory:
 List of targets:
 
   - lab1 — Laboratory Work №1
-
-> [!NOTE]
-> Make generates html-documentation on build
 
 ## Laboratory Work 1
 ### References:
