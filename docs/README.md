@@ -46,3 +46,4 @@ List of targets:
   - <https://stackoverflow.com/questions/51624933/how-exactly-do-lookup-tables-work-and-how-to-implement-them>
   - <http://blog.kislenko.net/show.php?id=2045>
   - <https://en.wikipedia.org/wiki/Prime_number>
+  - <https://github.com/TheAlgorithms/C/blob/master/sorting/shell_sort.c>

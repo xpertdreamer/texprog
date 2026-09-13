@@ -5,4 +5,6 @@
 
 void primes(std::vector<int>& container);
 
+void sort(std::vector<int>& container);
+
 #endif
