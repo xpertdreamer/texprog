@@ -1,3 +1,6 @@
+#ifndef COUNTER_H
+#define COUNTER_H
+
 /**
  * @file counter.h
  * @brief Word counter class for counting word occurrences in a file.
@@ -119,3 +122,5 @@ public:
   void count();
   void index();
 };
+
+#endif

@@ -1,8 +1,12 @@
+#ifndef CMD_H
+#define CMD_H
+
 #include <functional>
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include <iostream>
+
 #include "counter.h"
 
 typedef struct {
@@ -54,3 +58,5 @@ public:
     ~CMD() = default;
     void parse_cmd();
 };
+
+#endif

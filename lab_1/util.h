@@ -1,3 +1,6 @@
+#ifndef UTIL_H
+#define UTIL_H
+
 #include <chrono>
 #include <iostream>
 
@@ -29,3 +32,5 @@
     auto end_##name = std::chrono::high_resolution_clock::now();        \
     auto duration_##name = std::chrono::duration_cast<std::chrono::microseconds>(end_##name - start_##name).count(); \
     std::cout << "Timer [" << #name << "] took: " << duration_##name << " microseconds\n";
+
+#endif
