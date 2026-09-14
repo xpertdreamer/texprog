@@ -85,6 +85,7 @@ void Counter::tokenize() {
       lower(token);
       tokens.emplace_back(token);
   }
+  DEBUG("Words: %ld\n", tokens.size());
   END(tokenize);
 }
 
