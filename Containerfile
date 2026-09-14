@@ -1,14 +1,14 @@
 FROM docker.io/library/archlinux:base
 
-RUN pacman -Syu --noconfirm && \
+RUN pacman -Sy --noconfirm && \
     pacman -S --noconfirm \
     gcc \
     make \
-    glibc \
+    doxygen \
     && pacman -Scc --noconfirm
 
 WORKDIR /app
 
 CMD ["/bin/bash"]
 
-ENTRYPOINT["./build.sh"]
+ENTRYPOINT ["./build.sh"]
