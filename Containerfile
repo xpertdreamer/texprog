@@ -10,3 +10,5 @@ RUN pacman -Syu --noconfirm && \
 WORKDIR /app
 
 CMD ["/bin/bash"]
+
+ENTRYPOINT["./build.sh"]
