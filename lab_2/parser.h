@@ -145,7 +145,8 @@ class Parser {
 
         static Format
         detect(const std::string& text);
-        // TODO: parse
+
+        // TODO: parse (search)
 };
 
 #endif

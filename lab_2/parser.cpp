@@ -41,25 +41,25 @@ Parser::validate(const std::string& text, Format goal)
 bool
 Parser::is_html(const std::string& text)
 {
-    static const std::regex html_header(HTML_HEADER_SIGNS);
-    static const std::regex html_paragraph(HTML_PARAGRAPH_SIGNS);
-    static const std::regex html_list(HTML_LIST_SIGNS);
+    static const std::regex html_header(HTML_HEADER_SIGNS, std::regex::multiline);
+    static const std::regex html_paragraph(HTML_PARAGRAPH_SIGNS, std::regex::multiline);
+    static const std::regex html_list(HTML_LIST_SIGNS, std::regex::multiline);
     return std::regex_search(text, html_header) || std::regex_search(text, html_paragraph) || std::regex_search(text, html_list);
 }
 
 bool
 Parser::is_markdown(const std::string& text)
 {
-    static const std::regex md_header(MD_HEADER_SIGNS);
-    static const std::regex md_unordered(MD_UNORDERED_SIGNS);
-    static const std::regex md_ordered(MD_ORDERED_SIGNS);
+    static const std::regex md_header(MD_HEADER_SIGNS, std::regex::multiline);
+    static const std::regex md_unordered(MD_UNORDERED_SIGNS, std::regex::multiline);
+    static const std::regex md_ordered(MD_ORDERED_SIGNS, std::regex::multiline);
     return std::regex_search(text, md_header) || std::regex_search(text, md_unordered) || std::regex_search(text, md_ordered);
 }
 
 bool
 Parser::is_asciidoc(const std::string& text)
 {
-    static const std::regex doc_header(DOC_HEADER_SIGNS);
-    static const std::regex doc_list(DOC_LIST_SIGNS);
+    static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::multiline);
+    static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::multiline);
     return std::regex_search(text, doc_header) || std::regex_search(text, doc_list);
 }
