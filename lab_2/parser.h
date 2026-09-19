@@ -93,6 +93,35 @@
  */
 #define MD_ORDERED_SIGNS     R"(^\s*\d+\.\s+(.+)$)"
 
+/**
+ * @def DOC_HEADER_SIGNS
+ * @brief Regular expression for detecting AsciiDoc headers.
+ * Matches AsciiDoc lines starting with literal '=' repeated between 1-6 times.
+ * @details Regex breakdown:
+ *
+ * - '^' - start of the line
+ * - '={1,6}' - literal '=' repeated 1-6 times
+ * - '\s+' - one or more whitespaces
+ * - '(.+)' - any text (at least one character)
+ * - '$' - end of the line
+ */
+#define DOC_HEADER_SIGNS     R"(^={1,6}\s+(.+)$)"
+
+/**
+ * @def DOC_HEADER_SIGNS
+ * @brief Regular expression for detecting AsciiDoc lists.
+ * Matches AsciiDoc lines starting with literals '*', '-' or '.' following by text.
+ * @details Regex breakdown:
+ *
+ * - '^' - start of the line
+ * - '\s*' - zero or more whitespaces
+ * - '([*\-]|\.)' - literals '*', '-' or '.'
+ * - '\s+' - one or more whitespaces
+ * - '(.+)' - any text (at least one character)
+ * - '$' - end of the line
+ */
+#define DOC_LIST_SIGNS       R"(^\s*([*\-]|\.)\s+(.+)$)"
+
 class Parser {
     static bool
     is_html(const std::string& text);
@@ -101,7 +130,7 @@ class Parser {
     is_markdown(const std::string& text);
 
     static bool
-    has_asciidoc(const std::string& text);
+    is_asciidoc(const std::string& text);
 
     public:
         static bool
