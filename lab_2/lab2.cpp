@@ -1,5 +1,7 @@
+#include <cstdlib>
+
 int
 main(void)
 {
-    return 1;
+    return EXIT_SUCCESS;
 }
