@@ -65,3 +65,13 @@ List of targets:
   - <https://en.wikipedia.org/wiki/Prime_number>
   - <https://github.com/TheAlgorithms/C/blob/master/sorting/shell_sort.c>
   - <https://unix.stackexchange.com/questions/140750/generate-random-numbers-in-specific-range>
+
+
+## Laboratory Work 2
+### References:
+  - <https://regex101.com/>
+  - <https://habr.com/ru/companies/otus/articles/532056/>
+  - <https://stackoverflow.com/questions/12908534/retrieving-a-regex-search-in-c>
+  - <https://docs.asciidoctor.org/asciidoc/latest>
+  - <https://stackoverflow.com/questions/56710024/what-is-a-raw-string>
+  - <https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40>
