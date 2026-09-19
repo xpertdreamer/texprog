@@ -34,7 +34,7 @@ chmod +x random.sh
 ## Make commands
 
 > [!NOTE]
-> Make generates html-documentation on build (/docs/html/index.html)
+> Make generates html-documentation on build (/docs/html/index.html) (provide DOX=1 with make command)
 
 Build one target from list:
 
