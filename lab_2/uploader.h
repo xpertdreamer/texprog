@@ -1,3 +1,6 @@
+#ifndef UPLOADER_H
+#define UPLOADER_H
+
 #include <string>
 
 class Uploader {
@@ -8,3 +11,5 @@ class Uploader {
         static std::string
         upload_stdin();
 };
+
+#endif

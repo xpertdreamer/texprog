@@ -1,3 +1,6 @@
+#ifndef ELEMENT_H
+#define ELEMENT_H
+
 #include "util.h"
 
 #include <cstdint>
@@ -46,3 +49,5 @@ class List : public Element {
 
         bool get_ordered() const { return ordered; }
 };
+
+#endif
