@@ -4,7 +4,7 @@
 bool
 Parser::validate(const std::string& text)
 {
-
+    // TODO: implement
 }
 
 bool
