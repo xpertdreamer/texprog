@@ -108,7 +108,7 @@
 #define DOC_HEADER_SIGNS     R"(^={1,6}\s+(.+)$)"
 
 /**
- * @def DOC_HEADER_SIGNS
+ * @def DOC_LIST_SIGNS
  * @brief Regular expression for detecting AsciiDoc lists.
  * Matches AsciiDoc lines starting with literals '*', '-' or '.' following by text.
  * @details Regex breakdown:
