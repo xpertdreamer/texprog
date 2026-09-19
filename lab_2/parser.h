@@ -4,6 +4,13 @@
 #include <string>
 #include <regex>
 
+enum class Format {
+    Html,
+    AsciiDoc,
+    Markdown,
+    Unknown
+};
+
 /**
  * @def HTML_HEADER_SIGNS
  * @brief Regular expression for detecting HTML header tags.
@@ -134,8 +141,10 @@ class Parser {
 
     public:
         static bool
-        validate(const std::string& text);
+        validate(const std::string& text, Format goal);
 
+        static Format
+        detect(const std::string& text);
         // TODO: parse
 };
 

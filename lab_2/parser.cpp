@@ -1,10 +1,41 @@
 #include "parser.h"
+#include "util.h"
+
 #include <regex>
 
-bool
-Parser::validate(const std::string& text)
-{
+static const char*
+to_string(Format f) {
+    switch (f) {
+        case Format::Html:     return "HTML";
+        case Format::AsciiDoc: return "AsciiDoc";
+        case Format::Markdown: return "Markdown";
+        case Format::Unknown:  break;
+    }
+    return "Unknown";
+}
 
+Format
+Parser::detect(const std::string& text)
+{
+    if (is_html(text))     return Format::Html;
+    if (is_markdown(text)) return Format::Markdown;
+    if (is_asciidoc(text)) return Format::AsciiDoc;
+    return Format::Unknown;
+}
+
+bool
+Parser::validate(const std::string& text, Format goal)
+{
+    const Format have = detect(text);
+    if (have == Format::Unknown) {
+        ERROR("Unknown file format provided");
+        return false;
+    }
+    if (have != goal) {
+        ERROR("Format mismatch\texpected=%s\tgot=%s", to_string(goal), to_string(have));
+        return false;
+    }
+    return true;
 }
 
 bool
