@@ -4,7 +4,8 @@
 #include <string>
 #include <regex>
 
-#define HTML_SIGNS R"(<\s*\/?\s*(html|body|div|p|span|a)>)"
+#define HTML_SIGNS      R"(<\s*\/?\s*(html|body|div|p|span|a)\s*>)"
+#define HEADER_MD_SIGNS R"(^(#{1,6})\s+(.+)$)"
 
 class Parser {
     static bool
