@@ -14,11 +14,11 @@ Uploader::upload_file(const std::string& path)
         ERROR("Cannot open input gile!");
         throw std::invalid_argument("upload_file: Given input is invalid!\n");
     }
-    DEBUG("File %s successfuly opened\n", path.c_str());
+    DEBUG("File %s successfuly opened", path.c_str());
     std::stringstream ss;
     ss << input.rdbuf();
     input.close();
-    DEBUG("File %s successfully closed, and input sent to the buffer\n",
+    DEBUG("File %s successfully closed, and input sent to the buffer",
           path.c_str());
     #if TEST
     std::cout << ss.str();
