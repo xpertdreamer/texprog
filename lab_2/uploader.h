@@ -2,9 +2,9 @@
 
 class Uploader {
     public:
-        std::string
+        static std::string
         upload_file(const std::string& path);
 
-        std::string
+        static std::string
         upload_stdin();
 };
