@@ -15,6 +15,10 @@ class Header : public Element {
         std::string text = "";
     public:
         inline Header(uint8_t l, const std::string& t) : level(l), text(t) { DEBUG("Header initialized\tlevel=%u\ttext=%s", l, t.c_str()); }
+
+        uint8_t get_level() const { return level; }
+
+        const std::string& get_text() const { return text; }
 };
 
 class Paragraph : public Element {
@@ -22,6 +26,8 @@ class Paragraph : public Element {
         std::string text = "";
     public:
         inline Paragraph(const std::string& t) : text(t) { DEBUG("Paragraph initialized\ttext=%s", text.c_str()); }
+
+        const std::string& get_text() const { return text; }
 };
 
 struct ListElement {
@@ -34,4 +40,9 @@ class List : public Element {
         std::vector<ListElement> elements;
         bool ordered = false;
     public:
+        inline List(std::vector<ListElement> e, bool o) : elements(e), ordered(o) { DEBUG("List initialized\tsize=%lu\tordered=%b", elements.size(), ordered); }
+
+        const std::vector<ListElement>& get_elements() const { return elements; }
+
+        bool get_ordered() const { return ordered; }
 };
