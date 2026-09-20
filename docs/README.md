@@ -9,10 +9,10 @@ Otherwise, if you have **Podman** on your machine, just run the container with t
 
 ``` shell
     podman build . -t env:latest
-    podman run --rm -it -v .:/app env:latest [target to build]
+    podman run --rm -v .:/app env:latest [target to build]
 ```
 
-Then, run the [build script](#make-commands) inside.
+The build script runs automatically inside the container to build the specified target. The list of all targets can be found in the [make](#make-commands) section. 
 
 ## Random generator
 
@@ -66,7 +66,8 @@ Remove build directory:
 
 List of targets:
 
-  - lab1 — Laboratory Work №1
+  - lab1 - Laboratory Work №1
+  - lab2 - Laboratory Work №2
 
 ## Laboratory Work 1
 ### References:
