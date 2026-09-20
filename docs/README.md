@@ -28,24 +28,24 @@ You can provide the `-d` flag at the end of the Podman run command to generate D
 
 ## Random generator
 
-The project root includes the `random.sh` script. It works on almost every Linux machine and generates 150 numbers in the range from 1 to 10000. 
+The project root includes `bash/` directory with the `random.sh` script. It works on almost every Linux machine and generates 150 numbers in the range from 1 to 10000. 
 
 To use it, run:
 
 ``` shell
-sh random.sh
+bash bash/random.sh
 ```
 
 or 
 
 ``` shell
-chmod +x random.sh
-./random.sh
+chmod +x bash/random.sh
+./bash/random.sh
 ```
 
 ## Person generator
 
-The project root also includes the `person.sh` script. It works incredibly simply: it takes base tokens (such as last name, first name, etc.), combines them into a single string, and that's it — you have new person data on your screen.
+The `bash/` directory also includes the `person.sh` script. It works incredibly simply: it takes base tokens (such as last name, first name, etc.), combines them into a single string, and that's it — you have new person data on your screen.
 
 Usage examples are shown in the [Random generator](#random-generator) section.
 
