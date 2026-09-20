@@ -61,10 +61,12 @@ Validator::valid_email(const std::wstring& text)
 std::wstring
 Validator::validate(const std::wstring &text)
 {
+    START(validate);
     DEBUG("Call validate");
     std::wstring name = valid_name(text);
     std::wstring email = valid_email(text);
     std::wstring phone = valid_phone(text);
     std::wstring date = valid_date(text);
+    END(validate);
     return name + L" " + email + L" "  + phone + L" " + date;
 }

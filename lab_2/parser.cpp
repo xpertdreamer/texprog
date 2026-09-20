@@ -102,6 +102,7 @@ Parser::is_asciidoc(const std::string& text)
 std::vector<Element>
 Parser::find(const std::string& text, Type type)
 {
+    START(find);
     DEBUG("Call find");
     std::vector<Element> result;
     static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::multiline);
@@ -145,5 +146,6 @@ Parser::find(const std::string& text, Type type)
         }
         result.push_back(std::move(element));
     }
+    END(find);
     return result;
 }

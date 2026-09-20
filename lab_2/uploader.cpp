@@ -7,6 +7,7 @@
 std::string
 Uploader::upload_file(const std::string& path)
 {
+    START(upload_file);
     DEBUG("Call upload_file");
     DEBUG("PATH: %s", path.c_str());
     std::ifstream input;
@@ -26,12 +27,14 @@ Uploader::upload_file(const std::string& path)
     ss.clear();
     ss.seekg(0, std::ios::beg);
     #endif
+    END(upload_file);
     return ss.str();
 }
 
 std::wstring
 Uploader::upload_stdin()
 {
+    START(upload_stdin);
     DEBUG("Call upload_stdin");
     std::wstringstream ss;
     ss << std::wcin.rdbuf();
@@ -41,5 +44,6 @@ Uploader::upload_stdin()
     ss.seek(0, std::ios::beg);
     #endif
     DEBUG("Input successfully readen");
+    END(upload_stdin);
     return ss.str();
 }
