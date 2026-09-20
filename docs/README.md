@@ -57,7 +57,10 @@ After building, you can run your target:
 ./build/lab_*/lab* -flags
 ```
 
-Every binary without flags, or with the -h flag, shows a help message with all the relevant information.
+> [!NOTE]
+> Every binary without flags, or with the -h flag, shows a help message with all the relevant information.
+
+You can also use script `/bash/run.sh` to run every compiled binary included in this project.
 
 ## Make commands
 
@@ -111,3 +114,4 @@ List of targets:
   - <https://stackoverflow.com/questions/2264428/how-to-convert-a-string-to-lower-case-in-bash>
   - <https://stackoverflow.com/questions/2573834/c-convert-string-or-char-to-wstring-or-wchar-t>
   - <https://cplusplus.com/reference/sstream/wstringstream/>
+  - <https://www.c-cpp.ru/content/freopen>
