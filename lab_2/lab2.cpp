@@ -89,6 +89,7 @@ main(int argc, char** argv)
             std::string text = Uploader::upload_file(path);
             if (!Parser::validate(text, Format::AsciiDoc)) return EXIT_FAILURE;
             std::vector<Element> res = Parser::find(text, type);
+            std::freopen(nullptr, "w", stdout);
             std::cout << "Found:" << std::endl;
             for (const auto &it : res) {
                 std::cout << std::left << std::setw(100) << it.text << std::left <<std::setw(10) << "\t" << "line=" << it.line;
