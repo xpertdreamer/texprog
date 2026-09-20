@@ -23,4 +23,8 @@ else
     middlename="${F_MIDDLENAMES[$RANDOM % ${#F_MIDDLENAMES[@]}]}"
 fi
 
-echo "$lastname $firstname $middlename"
+email_base=$(sed 'y/абвгдеёжзийклмнопрстуфхцчшщъыьэюя/abvgdeejziyklmnoprstufhccss_y_eua/' <<< "${lastname,,}")
+domain="${DOMAINS[$RANDOM % ${#DOMAINS[@]}]}"
+email="$email_base$RANDOM@$domain"
+
+echo "$lastname $firstname $middlename $email"
