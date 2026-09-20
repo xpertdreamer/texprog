@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <getopt.h>
+#include <stdexcept>
 #include <string>
 #include <unistd.h>
 
@@ -46,11 +47,17 @@ main(int argc, char** argv)
         }
     }
 
-    if (p_providen) {
-        std::string text = Uploader::upload_file(path);
-        if (!Parser::validate(text, Format::AsciiDoc)) return EXIT_FAILURE;
-    } else {
-        ERROR("Some required flag did not providen");
+    try {
+        if (p_providen) {
+            std::string text = Uploader::upload_file(path);
+            if (!Parser::validate(text, Format::AsciiDoc)) return EXIT_FAILURE;
+        } else {
+            ERROR("Some required flag did not providen");
+            HELP(argv[0]);
+            return EXIT_FAILURE;
+        }
+    } catch (std::invalid_argument& e) {
+        ERROR("Error occured: %s", e.what());
         return EXIT_FAILURE;
     }
 
