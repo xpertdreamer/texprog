@@ -12,10 +12,9 @@ Validator::valid_date(const std::string& text)
 std::string
 Validator::valid_phone(const std::string& text)
 {
-    std::regex pattern(PHONE_VALIDATOR);
+    std::regex pattern(PHONE_PATTERN);
     std::smatch match;
     if (!std::regex_search(text, match, pattern)) return text;
-    std::string res = match.str();
-    res.erase(std::remove(res.begin(), res.end(), '-'), res.end());
-    return std::regex_replace(text, pattern, res);
+    std::string clean = std::regex_replace(match.str(), std::regex("-"), "");
+    return std::regex_replace(text, pattern, clean);
 }
