@@ -1,6 +1,7 @@
 #include "util.h"
 #include "uploader.h"
 #include "parser.h"
+#include "validator.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -10,7 +11,7 @@
 #include <unistd.h>
 #include <iomanip>
 
-#define FLAGS "p:hf:"
+#define FLAGS "p:hf:v"
 
 // TODO: struct options to avoid massive bool groups
 
@@ -19,22 +20,25 @@
         fprintf(stderr, "\t-p\tpath to upload input file\n"); \
         fprintf(stderr, "\t-h\tprint this message\n"); \
         fprintf(stderr, "\t-f\tfind structure element in text\n"); \
+        fprintf(stderr, "\t-v\tinput as string and validate\n"); \
         return EXIT_SUCCESS; } while(0)
 
 int
 main(int argc, char** argv)
 {
-    if (!setlocale(LC_ALL, "C.UTF-8")) {
+    if (!std::setlocale(LC_ALL, "ru_RU.UTF-8")) {
         ERROR("setlocale failed — wide output will be empty");
         return EXIT_FAILURE;
     }
     // p - path to parsed file ;
     // h - print help ;
-    // f - find structure element
+    // f - find structure element;
+    // v - input as string and validate
     int opt;
     std::string path, elem;
+    std::wstring input;
     Type type;
-    bool p_providen = false, f_providen = false;;
+    bool p_providen = false, f_providen = false, v_provided = false;
     while ((opt = getopt(argc, argv, FLAGS)) != -1) {
         switch (opt) {
             case 'p': {
@@ -58,12 +62,19 @@ main(int argc, char** argv)
                 f_providen = true;
                 break;
             }
+            case 'v': v_provided = true; break;
             case 'h': [[fallthrough]];
             default: HELP(argv[0]); break;
         }
     }
 
     try {
+        if (v_provided) {
+            std::wstring text = Uploader::upload_stdin();
+            std::wstring res = Validator::validate(text);
+            std::wcout << L"Result: " << res << std::endl;
+            return EXIT_SUCCESS;
+        }
         if (p_providen && f_providen) {
             std::string text = Uploader::upload_file(path);
             if (!Parser::validate(text, Format::AsciiDoc)) return EXIT_FAILURE;
