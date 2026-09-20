@@ -130,13 +130,13 @@ enum class Format {
 #define DOC_LIST_SIGNS       R"(^\s*([*\-]|\.)\s+(.+)$)"
 
 class Parser {
-    static bool
+    static int
     is_html(const std::string& text);
 
-    static bool
+    static int
     is_markdown(const std::string& text);
 
-    static bool
+    static int
     is_asciidoc(const std::string& text);
 
     public:

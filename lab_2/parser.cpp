@@ -1,7 +1,21 @@
 #include "parser.h"
 #include "util.h"
 
+#include <algorithm>
 #include <regex>
+
+constexpr int HEADER_SCORE = 10;
+constexpr int HTMLTAG_SCORE = 5;
+constexpr int UNORDERED_SCORE = 2;
+constexpr int ORDERED_SCORE = 2;
+
+static size_t
+count(const std::string& text, const std::regex& regex)
+{
+    size_t n = 0;
+    for (auto it = std::sregex_iterator(text.begin(), text.end(), regex); it != std::sregex_iterator(); ++it) ++n;
+    return n;
+}
 
 static const char*
 to_string(Format f) {
@@ -17,10 +31,22 @@ to_string(Format f) {
 Format
 Parser::detect(const std::string& text)
 {
-    if (is_asciidoc(text)) return Format::AsciiDoc;
-    if (is_markdown(text)) return Format::Markdown;
-    if (is_html(text))     return Format::Html;
-    return Format::Unknown;
+    // if (is_asciidoc(text)) return Format::AsciiDoc;
+    // if (is_markdown(text)) return Format::Markdown;
+    // if (is_html(text))     return Format::Html;
+    // return Format::Unknown;
+    const int md_score = is_markdown(text);
+    const int html_score = is_html(text);
+    const int adoc_score = is_asciidoc(text);
+    const int best = std::max({md_score, html_score, adoc_score});
+    if (best == 0) return Format::Unknown;
+    if (((md_score == best) + (html_score == best) + (adoc_score == best)) > 1) {
+        ERROR("Ambigioues format, return AsciiDoc");
+        return Format::AsciiDoc;
+    }
+    if (md_score == best) return Format::Markdown;
+    if (html_score == best) return Format::Html;
+    return Format::AsciiDoc;
 }
 
 bool
@@ -38,28 +64,28 @@ Parser::validate(const std::string& text, Format goal)
     return true;
 }
 
-bool
+int
 Parser::is_html(const std::string& text)
 {
     static const std::regex html_header(HTML_HEADER_SIGNS, std::regex::multiline);
     static const std::regex html_paragraph(HTML_PARAGRAPH_SIGNS, std::regex::multiline);
     static const std::regex html_list(HTML_LIST_SIGNS, std::regex::multiline);
-    return std::regex_search(text, html_header) || std::regex_search(text, html_paragraph) || std::regex_search(text, html_list);
+    return HTMLTAG_SCORE * count(text, html_header) + HTMLTAG_SCORE * count(text, html_paragraph) + HTMLTAG_SCORE * count(text, html_list);
 }
 
-bool
+int
 Parser::is_markdown(const std::string& text)
 {
     static const std::regex md_header(MD_HEADER_SIGNS, std::regex::multiline);
     static const std::regex md_unordered(MD_UNORDERED_SIGNS, std::regex::multiline);
     static const std::regex md_ordered(MD_ORDERED_SIGNS, std::regex::multiline);
-    return std::regex_search(text, md_header) || std::regex_search(text, md_unordered) || std::regex_search(text, md_ordered);
+    return HEADER_SCORE * count(text, md_header) + UNORDERED_SCORE * count(text, md_unordered) + ORDERED_SCORE * count(text, md_ordered);
 }
 
-bool
+int
 Parser::is_asciidoc(const std::string& text)
 {
     static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::multiline);
     static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::multiline);
-    return std::regex_search(text, doc_header) || std::regex_search(text, doc_list);
+    return HEADER_SCORE * count(text, doc_header) + UNORDERED_SCORE * count(text, doc_list);
 }
