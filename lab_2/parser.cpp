@@ -3,7 +3,6 @@
 
 #include <algorithm>
 #include <regex>
-#include <sstream>
 #include <string>
 
 constexpr int HEADER_SCORE = 10;
@@ -14,13 +13,16 @@ constexpr int ORDERED_SCORE = 2;
 static size_t
 count(const std::string& text, const std::regex& regex)
 {
+    DEBUG("Call count");
     size_t n = 0;
     for (auto it = std::sregex_iterator(text.begin(), text.end(), regex); it != std::sregex_iterator(); ++it) ++n;
+    DEBUG("Count=%ld", n);
     return n;
 }
 
 static const char*
 to_string(Format f) {
+    DEBUG("Call to_string");
     switch (f) {
         case Format::AsciiDoc: return "AsciiDoc";
         case Format::Markdown: return "Markdown";
@@ -33,6 +35,7 @@ to_string(Format f) {
 Format
 Parser::detect(const std::string& text)
 {
+    DEBUG("Call detect");
     // if (is_asciidoc(text)) return Format::AsciiDoc;
     // if (is_markdown(text)) return Format::Markdown;
     // if (is_html(text))     return Format::Html;
@@ -54,6 +57,7 @@ Parser::detect(const std::string& text)
 bool
 Parser::validate(const std::string& text, Format goal)
 {
+    DEBUG("Call validate");
     const Format have = detect(text);
     if (have == Format::Unknown) {
         ERROR("Unknown file format provided");
@@ -69,6 +73,7 @@ Parser::validate(const std::string& text, Format goal)
 int
 Parser::is_html(const std::string& text)
 {
+    DEBUG("Call is_html");
     static const std::regex html_header(HTML_HEADER_SIGNS, std::regex::multiline);
     static const std::regex html_paragraph(HTML_PARAGRAPH_SIGNS, std::regex::multiline);
     static const std::regex html_list(HTML_LIST_SIGNS, std::regex::multiline);
@@ -78,6 +83,7 @@ Parser::is_html(const std::string& text)
 int
 Parser::is_markdown(const std::string& text)
 {
+    DEBUG("Call is_markdown");
     static const std::regex md_header(MD_HEADER_SIGNS, std::regex::multiline);
     static const std::regex md_unordered(MD_UNORDERED_SIGNS, std::regex::multiline);
     static const std::regex md_ordered(MD_ORDERED_SIGNS, std::regex::multiline);
@@ -87,6 +93,7 @@ Parser::is_markdown(const std::string& text)
 int
 Parser::is_asciidoc(const std::string& text)
 {
+    DEBUG("Call is_asciidoc");
     static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::multiline);
     static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::multiline);
     return HEADER_SCORE * count(text, doc_header) + UNORDERED_SCORE * count(text, doc_list);
@@ -95,6 +102,7 @@ Parser::is_asciidoc(const std::string& text)
 std::vector<Element>
 Parser::find(const std::string& text, Type type)
 {
+    DEBUG("Call find");
     std::vector<Element> result;
     static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::multiline);
     static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::multiline);
@@ -110,7 +118,7 @@ Parser::find(const std::string& text, Type type)
     auto end   = std::sregex_iterator();
     for (auto it = begin; it != end; ++it) {
         const std::smatch& match = *it;
-        size_t line = 1 + std::count(text.end(), text.begin() + match.position(),'\n');
+        size_t line = 1 + std::count(text.begin(), text.begin() + match.position(),'\n');
         Element element = {
             .type  = type,
             .text  = "",
