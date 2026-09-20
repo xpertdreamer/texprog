@@ -1,3 +1,13 @@
+## Table of contents
+
+- [Build systems](#build-systems)
+- [Random generator](#random-generator)
+- [Person generator](#person-generator)
+- [How to Use the CLIs](#how-to-use-the-clis)
+- [Make commands](#make-commands)
+- [Laboratory Work 1](#laboratory-work-1)
+- [Laboratory Work 2](#laboratory-work-2)
+
 ## Build systems
 
 If you wanna build on your local machine, you should have the following instruments:
@@ -9,10 +19,12 @@ Otherwise, if you have **Podman** on your machine, just run the container with t
 
 ``` shell
     podman build . -t env:latest
-    podman run --rm -v .:/app env:latest [target to build]
+    podman run --rm -v .:/app env:latest [target to build] <-d>
 ```
 
-The build script runs automatically inside the container to build the specified target. The list of all targets can be found in the [make](#make-commands) section. 
+The build script runs automatically inside the container to build the specified target. The list of all targets can be found in the [make](#make-commands) section.
+
+You can provide the `-d` flag at the end of the Podman run command to generate Doxygen documentation.
 
 ## Random generator
 
