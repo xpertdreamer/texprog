@@ -31,6 +31,22 @@ chmod +x random.sh
 ./random.sh
 ```
 
+## Person generator
+
+The project root also includes the `person.sh` script. It works incredibly simply: it takes base tokens (such as last name, first name, etc.), combines them into a single string, and that's it — you have new person data on your screen.
+
+Usage examples are shown in the [Random generator](#random-generator) section.
+
+## How to Use the CLIs
+
+After building, you can run your target:
+
+```shell
+./build/lab_*/lab* -flags
+```
+
+Every binary without flags, or with the -h flag, shows a help message with all the relevant information.
+
 ## Make commands
 
 > [!NOTE]
