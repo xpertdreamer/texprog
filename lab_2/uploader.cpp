@@ -2,6 +2,7 @@
 #include "util.h"
 #include <fstream>
 #include <sstream>
+#include <string>
 
 std::string
 Uploader::upload_file(const std::string& path)
@@ -28,16 +29,16 @@ Uploader::upload_file(const std::string& path)
     return ss.str();
 }
 
-std::string
+std::wstring
 Uploader::upload_stdin()
 {
     DEBUG("Call upload_stdin");
-    std::stringstream ss;
-    ss << std::cin.rdbuf();
+    std::wstringstream ss;
+    ss << std::wcin.rdbuf();
     #if TEST
-    std::cout << ss.str();
+    std::wcout << ss.str();
     ss.clear();
-    ss.seekg(0, std::ios::beg);
+    ss.seek(0, std::ios::beg);
     #endif
     DEBUG("Input successfully readen");
     return ss.str();

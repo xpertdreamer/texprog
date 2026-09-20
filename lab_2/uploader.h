@@ -8,7 +8,7 @@ class Uploader {
         static std::string
         upload_file(const std::string& path);
 
-        static std::string
+        static std::wstring
         upload_stdin();
 };
 
