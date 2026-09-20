@@ -54,6 +54,7 @@ main(int argc, char** argv)
                 }
                 if (elem == "h") type = Type::Header;
                 else if (elem == "l") type = Type::List;
+                else type = Type::Paragraph;
                 f_providen = true;
                 break;
             }

@@ -143,6 +143,8 @@ struct Element {
  */
 #define DOC_LIST_SIGNS       R"(^\s*([*\-]|\.)\s+(.+)$)"
 
+#define DOC_PARAGRAPH_SIGNS R"(^\s*\n[а-яА-ЯёЁa-zA-Z0-9][^\n]*\n\s*$)"
+
 class Parser {
     static int
     is_html(const std::string& text);

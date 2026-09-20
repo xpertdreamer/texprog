@@ -98,27 +98,29 @@ Parser::find(const std::string& text, Type type)
     std::vector<Element> result;
     static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::multiline);
     static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::multiline);
-    const std::regex* rx;
+    static const std::regex doc_para(DOC_PARAGRAPH_SIGNS, std::regex::multiline);
+    const std::regex* rx = nullptr;
     switch (type) {
         case Type::Header: rx = &doc_header; break;
-        case Type::List: rx = &doc_list; break;
+        case Type::List:   rx = &doc_list;   break;
+        case Type::Paragraph: rx = &doc_para; break;
     }
-    std::istringstream iss(text);
-    std::string line;
-    size_t num = 0;
-    while(std::getline(iss, line)) {
-        ++num;
-        std::smatch match;
-        if (!std::regex_match(line, match, *rx)) continue;
+    if (!rx) return result;
+    auto begin = std::sregex_iterator(text.begin(), text.end(), *rx);
+    auto end   = std::sregex_iterator();
+    for (auto it = begin; it != end; ++it) {
+        const std::smatch& match = *it;
+        size_t line = 1 + std::count(text.end(), text.begin() + match.position(),'\n');
         Element element = {
-           .type = type,
-           .text = "",
-           .line = num,
-           .level = 0,
+            .type  = type,
+            .text  = "",
+            .line  = line,
+            .level = 0,
         };
         if (type == Type::Header) {
+            const std::string& h = match.str();
             uint8_t lvl = 0;
-            for (char c : line) {
+            for (char c : h) {
                 if (c == '=') ++lvl;
                 else if (c == ' ' || c == '\t') break;
             }
@@ -130,7 +132,9 @@ Parser::find(const std::string& text, Type type)
                 break;
             }
         }
-
+        if (element.text.empty() && match.size() > 0) {
+            element.text = match.str();
+        }
         result.push_back(std::move(element));
     }
     return result;
