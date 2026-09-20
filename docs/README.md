@@ -76,3 +76,4 @@ List of targets:
   - <https://stackoverflow.com/questions/56710024/what-is-a-raw-string>
   - <https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40>
   - <https://github.com/opendevise/asciidoc-samples/blob/main/demo.adoc>
+  - <https://dev.to/thormeier/how-to-generate-thousands-of-usernames-and-halfway-decent-passwords-with-bash-43m9>
