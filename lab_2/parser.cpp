@@ -6,9 +6,9 @@
 static const char*
 to_string(Format f) {
     switch (f) {
-        case Format::Html:     return "HTML";
         case Format::AsciiDoc: return "AsciiDoc";
         case Format::Markdown: return "Markdown";
+        case Format::Html:     return "HTML";
         case Format::Unknown:  break;
     }
     return "Unknown";
@@ -17,9 +17,9 @@ to_string(Format f) {
 Format
 Parser::detect(const std::string& text)
 {
-    if (is_html(text))     return Format::Html;
-    if (is_markdown(text)) return Format::Markdown;
     if (is_asciidoc(text)) return Format::AsciiDoc;
+    if (is_markdown(text)) return Format::Markdown;
+    if (is_html(text))     return Format::Html;
     return Format::Unknown;
 }
 
