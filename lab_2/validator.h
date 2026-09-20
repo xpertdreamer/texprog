@@ -7,9 +7,14 @@
 
 #define DATE_REPLACE "$3.$2.$1"
 
+#define PHONE_VALIDATOR R"((\+\d[\d-]*\d))"
+
 class Validator {
     static std::string
     valid_date(const std::string& text);
+
+    static std::string
+    valid_phone(const std::string& text);
 
     public:
         static std::string
