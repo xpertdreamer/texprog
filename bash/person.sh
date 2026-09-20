@@ -49,7 +49,7 @@ gender=$((RANDOM % 2)) # 0 - male, 1 - female
 
 lastname="${LASTNAMES[$RANDOM % ${#LASTNAMES[@]}]}"
 if [ $gender -eq 1 ]; then
-    lastname="${lastname}a"
+    lastname="${lastname}а"
 fi
 
 if [ $gender -eq 0 ]; then
