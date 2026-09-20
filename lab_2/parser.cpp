@@ -98,7 +98,11 @@ Parser::find(const std::string& text, Type type)
     std::vector<Element> result;
     static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::multiline);
     static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::multiline);
-    const std::regex* rx = type == Type::Header ? &doc_header : &doc_list;
+    const std::regex* rx;
+    switch (type) {
+        case Type::Header: rx = &doc_header; break;
+        case Type::List: rx = &doc_list; break;
+    }
     std::istringstream iss(text);
     std::string line;
     size_t num = 0;
