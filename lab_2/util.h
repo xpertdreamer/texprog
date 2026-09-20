@@ -66,6 +66,6 @@
 #define END(name) \
     auto end_##name = std::chrono::high_resolution_clock::now();        \
     auto duration_##name = std::chrono::duration_cast<std::chrono::microseconds>(end_##name - start_##name).count(); \
-    std::cout << "Timer [" << #name << "] took: " << duration_##name << " microseconds\n";
+    std::wcout << L"Timer [" << #name << "] took: " << duration_##name << L" microseconds\n"; \
 
 #endif
