@@ -5,24 +5,36 @@
 #include <string>
 #include <regex>
 
+/**
+ * @enum Format
+ * @brief Supported document formats.
+ */
 enum class Format {
-    Html,
-    AsciiDoc,
-    Markdown,
-    Unknown
+    Html,      /**< HTML format */
+    AsciiDoc,  /**< AsciiDoc format */
+    Markdown,  /**< Markdown format */
+    Unknown    /**< Unknown or undetected format */
 };
 
+/**
+ * @enum Type
+ * @brief Types of parsed document elements.
+ */
 enum class Type {
-    Header,
-    Paragraph,
-    List
+    Header,     /**< Header element (h1-h6, #, =) */
+    Paragraph,  /**< Paragraph element */
+    List        /**< List element (ordered or unordered) */
 };
 
+/**
+ * @struct Element
+ * @brief Represents a single parsed document element.
+ */
 struct Element {
-    Type type;
-    std::string text;
-    size_t line;
-    uint8_t level;
+    Type type;          /**< Type of the element */
+    std::string text;   /**< Text content of the element */
+    size_t line;        /**< Line number where the element starts */
+    uint8_t level;      /**< Nesting/header level (0 if not applicable) */
 };
 
 /**
@@ -143,25 +155,77 @@ struct Element {
  */
 #define DOC_LIST_SIGNS       R"(^\s*([*\-]|\.)\s+(.+)$)"
 
+/**
+ * @def DOC_PARAGRAPH_SIGNS
+ * @brief Regular expression for detecting AsciiDoc paragraphs.
+ * Matches a line of text surrounded by blank lines, starting with an
+ * alphanumeric character (Latin or Cyrillic).
+ * @details Regex breakdown:
+ *
+ * - '^' - start of the line
+ * - '\s*' - zero or more whitespaces
+ * - '\n' - newline character
+ * - '[а-яА-ЯёЁa-zA-Z0-9]' - first character (Cyrillic, Latin or digit)
+ * - '[^\n]*' - zero or more characters except newline
+ * - '\n' - newline character
+ * - '\s*' - zero or more whitespaces
+ * - '$' - end of the line
+ */
 #define DOC_PARAGRAPH_SIGNS R"(^\s*\n[а-яА-ЯёЁa-zA-Z0-9][^\n]*\n\s*$)"
 
+/**
+ * @class Parser
+ * @brief Provides format detection and element extraction for markup documents.
+ */
 class Parser {
+    /**
+     * @brief Checks whether the given text is in HTML format.
+     * @param text Input document text
+     * @return Confidence score (non-zero if HTML)
+     */
     static int
     is_html(const std::string& text);
 
+    /**
+     * @brief Checks whether the given text is in Markdown format.
+     * @param text Input document text
+     * @return Confidence score (non-zero if Markdown)
+     */
     static int
     is_markdown(const std::string& text);
 
+    /**
+     * @brief Checks whether the given text is in AsciiDoc format.
+     * @param text Input document text
+     * @return Confidence score (non-zero if AsciiDoc)
+     */
     static int
     is_asciidoc(const std::string& text);
 
     public:
+        /**
+         * @brief Validates that the text conforms to the given format.
+         * @param text Input document text
+         * @param goal Expected format to validate against
+         * @return true if the text matches the target format, false otherwise
+         */
         static bool
         validate(const std::string& text, Format goal);
 
+        /**
+         * @brief Detects the format of the given document.
+         * @param text Input document text
+         * @return Detected Format (Format::Unknown if detection fails)
+         */
         static Format
         detect(const std::string& text);
 
+        /**
+         * @brief Finds all elements of the specified type in the document.
+         * @param text Input document text
+         * @param type Type of elements to search for
+         * @return Vector of found Element objects
+         */
         static std::vector<Element>
         find(const std::string& text, Type type);
 };

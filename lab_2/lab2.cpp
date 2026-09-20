@@ -11,6 +11,16 @@
 #include <unistd.h>
 #include <iomanip>
 
+/**
+ * @def FLAGS
+ * @brief Option string for getopt(3).
+ * @details Contains the short options accepted by the program:
+ *
+ * - 'p:' - path to the input file (requires an argument)
+ * - 'h'  - print help message
+ * - 'f:' - structure element to find (requires an argument)
+ * - 'v'  - read input as a string and validate it
+ */
 #define FLAGS "p:hf:v"
 
 // TODO: struct options to avoid massive bool groups
