@@ -16,7 +16,7 @@ lab1: lab_1/main.cpp lab_1/counter.cpp lab_1/cmd.cpp lab_1/stl.cpp
 	g++ -Wall -Wextra lab_1/main.cpp lab_1/counter.cpp lab_1/cmd.cpp lab_1/stl.cpp -o build/lab_1/lab1
 	$(call run_doxygen)
 
-lab2: lab_2/lab2.cpp lab_2/parser.cpp lab_2/uploader.cpp
+lab2: lab_2/lab2.cpp lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp
 	@mkdir -p build/lab_2
 	g++ -Wall -Wextra $^ -o build/lab_2/lab2
 	$(call run_doxygen)
