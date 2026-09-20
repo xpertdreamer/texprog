@@ -64,7 +64,9 @@ Parser::validate(const std::string& text, Format goal)
         return false;
     }
     if (have != goal) {
-        ERROR("Format mismatch\texpected=%s\tgot=%s", to_string(goal), to_string(have));
+        const char* g = to_string(goal);
+        const char* h = to_string(have);
+        ERROR("Format mismatch\texpected=%s\tgot=%s", g, h);
         return false;
     }
     return true;
