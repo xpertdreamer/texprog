@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+cd "$(dirname "$0")"
+
 uppercase_rand() {
     local arg="$1"
     local len=${#arg}
@@ -35,13 +37,13 @@ function dirt {
     echo "$res"
 }
 
-mapfile -t LASTNAMES < ./assets/lastnames.txt
-mapfile -t F_FIRSTNAMES < ./assets/f_firstnames.txt
-mapfile -t F_MIDDLENAMES < ./assets/f_middlenames.txt
-mapfile -t M_FIRSTNAMES < ./assets/m_firstnames.txt
-mapfile -t M_MIDDLENAMES < ./assets/m_middlenames.txt
-mapfile -t DOMAINS < ./assets/domains.txt
-mapfile -t OPERATORS < ./assets/ops.txt
+mapfile -t LASTNAMES < ../assets/lastnames.txt
+mapfile -t F_FIRSTNAMES < ../assets/f_firstnames.txt
+mapfile -t F_MIDDLENAMES < ../assets/f_middlenames.txt
+mapfile -t M_FIRSTNAMES < ../assets/m_firstnames.txt
+mapfile -t M_MIDDLENAMES < ../assets/m_middlenames.txt
+mapfile -t DOMAINS < ../assets/domains.txt
+mapfile -t OPERATORS < ../assets/ops.txt
 
 gender=$((RANDOM % 2)) # 0 - male, 1 - female
 

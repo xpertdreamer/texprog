@@ -11,4 +11,4 @@ WORKDIR /app
 
 CMD ["/bin/bash"]
 
-ENTRYPOINT ["./build.sh"]
+ENTRYPOINT ["./bash/build.sh"]
