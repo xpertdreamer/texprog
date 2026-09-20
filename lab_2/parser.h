@@ -1,6 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include <cstdint>
 #include <string>
 #include <regex>
 
@@ -9,6 +10,19 @@ enum class Format {
     AsciiDoc,
     Markdown,
     Unknown
+};
+
+enum class Type {
+    Header,
+    Paragraph,
+    List
+};
+
+struct Element {
+    Type type;
+    std::string text;
+    size_t line;
+    uint8_t level;
 };
 
 /**
@@ -146,7 +160,8 @@ class Parser {
         static Format
         detect(const std::string& text);
 
-        // TODO: parse (search)
+        static std::vector<Element>
+        find(const std::string& text, Type type);
 };
 
 #endif

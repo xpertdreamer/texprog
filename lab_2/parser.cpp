@@ -3,6 +3,8 @@
 
 #include <algorithm>
 #include <regex>
+#include <sstream>
+#include <string>
 
 constexpr int HEADER_SCORE = 10;
 constexpr int HTMLTAG_SCORE = 5;
@@ -88,4 +90,44 @@ Parser::is_asciidoc(const std::string& text)
     static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::multiline);
     static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::multiline);
     return HEADER_SCORE * count(text, doc_header) + UNORDERED_SCORE * count(text, doc_list);
+}
+
+std::vector<Element>
+Parser::find(const std::string& text, Type type)
+{
+    std::vector<Element> result;
+    static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::multiline);
+    static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::multiline);
+    const std::regex* rx = type == Type::Header ? &doc_header : &doc_list;
+    std::istringstream iss(text);
+    std::string line;
+    size_t num = 0;
+    while(std::getline(iss, line)) {
+        ++num;
+        std::smatch match;
+        if (!std::regex_match(line, match, *rx)) continue;
+        Element element = {
+           .type = type,
+           .text = "",
+           .line = num,
+           .level = 0,
+        };
+        if (type == Type::Header) {
+            uint8_t lvl = 0;
+            for (char c : line) {
+                if (c == '=') ++lvl;
+                else if (c == ' ' || c == '\t') break;
+            }
+            element.level = lvl;
+        }
+        for (size_t g = match.size(); g-- > 1; ) {
+            if (match[g].matched && !match[g].str().empty()) {
+                element.text = match[g].str();
+                break;
+            }
+        }
+
+        result.push_back(std::move(element));
+    }
+    return result;
 }
