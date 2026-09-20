@@ -8,8 +8,8 @@ If you wanna build on your local machine, you should have the following instrume
 Otherwise, if you have **Podman** on your machine, just run the container with the virtual environment inside:
 
 ``` shell
-    podman build -t env:latest
-    podman run --rm -it -v .:/app env:latest
+    podman build . -t env:latest
+    podman run --rm -it -v .:/app env:latest [target to build]
 ```
 
 Then, run the [build script](#make-commands) inside.
@@ -80,3 +80,5 @@ List of targets:
   - <https://www.baeldung.com/linux/bash-string-character-loop>
   - <https://stackoverflow.com/questions/6212219/passing-parameters-to-a-bash-function>
   - <https://stackoverflow.com/questions/2264428/how-to-convert-a-string-to-lower-case-in-bash>
+  - <https://stackoverflow.com/questions/2573834/c-convert-string-or-char-to-wstring-or-wchar-t>
+  - <https://cplusplus.com/reference/sstream/wstringstream/>
