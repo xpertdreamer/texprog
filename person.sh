@@ -1,4 +1,39 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
+
+uppercase_rand() {
+    local arg="$1"
+    local len=${#arg}
+    local result=""
+    local chance="${2:-50}"
+    local char
+    for ((i = 0; i < len; i++)); do
+        char="${arg:i:1}"
+        if (( RANDOM % 100 < chance )); then
+            result+="${char^^}"
+        else
+            result+="${char}"
+        fi
+    done
+
+    echo "$result"
+}
+
+function dirt {
+    local arg="$1"
+    local len=${#arg}
+    local chance="${2:-20}"
+    local res=""
+    local char
+    for ((i=0; i<len; i++)); do
+        char="${arg:i:1}"
+        res+="$char"
+    if (( RANDOM % 100 < chance )); then
+            res+="$((RANDOM % 10))"
+        fi
+    done
+
+    echo "$res"
+}
 
 mapfile -t LASTNAMES < ./assets/lastnames.txt
 mapfile -t F_FIRSTNAMES < ./assets/f_firstnames.txt
@@ -25,6 +60,22 @@ fi
 
 email_base=$(sed 'y/абвгдеёжзийклмнопрстуфхцчшщъыьэюя/abvgdeejziyklmnoprstufhccss_y_eua/' <<< "${lastname,,}")
 domain="${DOMAINS[$RANDOM % ${#DOMAINS[@]}]}"
+email_base=$(uppercase_rand "$email_base" 30)
 email="$email_base$RANDOM@$domain"
 
-echo "$lastname $firstname $middlename $email"
+op="${OPERATORS[$RANDOM % ${#OPERATORS[@]}]}"
+phone="+7${op}-$((RANDOM % 900 + 100))-$((RANDOM % 90 + 10))-$((RANDOM % 90 + 10))"
+
+year=$((RANDOM % 55 + 1950))
+month=$((RANDOM % 12 + 1))
+day=$((RANDOM % 28 + 1))
+date=$(printf "%d-%02d-%02d" "$year" "$month"  "$day")
+
+lastname=$(uppercase_rand "$lastname" 30)
+lastname=$(dirt "$lastname" 20)
+middlename=$(uppercase_rand "$middlename" 30)
+middlename=$(dirt "$middlename" 10)
+firstname=$(uppercase_rand "$firstname" 20)
+firstnamename=$(dirt "$firstname" 5)
+
+echo "$lastname $firstname $middlename $email $phone $date"
