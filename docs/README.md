@@ -77,3 +77,6 @@ List of targets:
   - <https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40>
   - <https://github.com/opendevise/asciidoc-samples/blob/main/demo.adoc>
   - <https://dev.to/thormeier/how-to-generate-thousands-of-usernames-and-halfway-decent-passwords-with-bash-43m9>
+  - <https://www.baeldung.com/linux/bash-string-character-loop>
+  - <https://stackoverflow.com/questions/6212219/passing-parameters-to-a-bash-function>
+  - <https://stackoverflow.com/questions/2264428/how-to-convert-a-string-to-lower-case-in-bash>
