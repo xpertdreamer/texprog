@@ -204,6 +204,13 @@ class Parser {
 
     public:
         /**
+         * @brief Takes enum format and return its name in c_str format
+         * @param f Format returned from detect or other
+         * @return The name of given format
+         */
+        static const char*
+        to_string(Format f);
+        /**
          * @brief Validates that the text conforms to the given format.
          * @param text Input document text
          * @param goal Expected format to validate against

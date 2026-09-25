@@ -20,8 +20,8 @@ count(const std::string& text, const std::regex& regex)
     return n;
 }
 
-static const char*
-to_string(Format f) {
+const char*
+Parser::to_string(Format f) {
     DEBUG("Call to_string");
     switch (f) {
         case Format::AsciiDoc: return "AsciiDoc";
