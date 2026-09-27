@@ -138,6 +138,8 @@ struct Element {
  * - '(.+)' - any text (at least one character)
  * - '$' - end of the line
  */
+#define WDOC_HEADER_SIGNS     LR"(^={1,6}\s+(.+)$)"
+
 #define DOC_HEADER_SIGNS     R"(^={1,6}\s+(.+)$)"
 
 /**
@@ -153,25 +155,34 @@ struct Element {
  * - '(.+)' - any text (at least one character)
  * - '$' - end of the line
  */
+#define WDOC_LIST_SIGNS       LR"(^\s*([*\-]|\.)\s+(.+)$)"
+
 #define DOC_LIST_SIGNS       R"(^\s*([*\-]|\.)\s+(.+)$)"
 
 /**
  * @def DOC_PARAGRAPH_SIGNS
  * @brief Regular expression for detecting AsciiDoc paragraphs.
- * Matches a line of text surrounded by blank lines, starting with an
- * alphanumeric character (Latin or Cyrillic).
+ * Matches one or more lines of normal text (with at least one space per
+ * line), surrounded by blank lines or the start/end of the document.
  * @details Regex breakdown:
  *
- * - '^' - start of the line
- * - '\s*' - zero or more whitespaces
- * - '\n' - newline character
- * - '[а-яА-ЯёЁa-zA-Z0-9]' - first character (Cyrillic, Latin or digit)
- * - '[^\n]*' - zero or more characters except newline
- * - '\n' - newline character
- * - '\s*' - zero or more whitespaces
- * - '$' - end of the line
+ * - '(?:^|\n\n)' - start of text, or a blank line before the paragraph
+ * - '[a-zA-Z0-9"'\x80-\xFF]' - first character of the line: Latin letter,
+ *   digit, quote, or a byte belonging to a non-ASCII character (covers
+ *   Cyrillic and other scripts in UTF-8)
+ * - '[^\n]*' - any characters until a space
+ * - '[ \t]' - a space or tab, needed so single-word lines (like a
+ *   delimiter or a macro call) are not treated as paragraphs
+ * - '[^\n]*' - the rest of the line
+ * - '(?:\n[a-zA-Z0-9"'\x80-\xFF][^\n]*[ \t][^\n]*)*' - more lines of the
+ *   same paragraph, each following the same rule
+ * - '(?=\n\n|$)' - a blank line or the end of the document after the
+ *   paragraph
  */
-#define DOC_PARAGRAPH_SIGNS R"(^\s*\n[а-яА-ЯёЁa-zA-Z0-9][^\n]*\n\s*$)"
+#define DOC_PARAGRAPH_SIGNS R"((?:^|\n\n)([a-zA-Z0-9"'\x80-\xFF][^\n]*[ \t][^\n]*(?:\n[a-zA-Z0-9"'\x80-\xFF][^\n]*[ \t][^\n]*)*)(?=\n\n|$))"
+//#define DOC_PARAGRAPH_SIGNS R"(^\s*[а-яА-ЯёЁa-zA-Z0-9][^\n]*\n\s*$)"
+// #define DOC_PARAGRAPH_SIGNS \
+//     R"(^(?!\s*$).+(?:\n(?!\s*$).+)*)"
 
 /**
  * @class Parser
@@ -204,7 +215,7 @@ class Parser {
 
     public:
         /**
-         * @brief Takes enum format and return its name in c_str format
+         * @brief Takes enum format and return its name in c_str 
          * @param f Format returned from detect or other
          * @return The name of given format
          */

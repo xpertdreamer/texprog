@@ -107,9 +107,9 @@ Parser::find(const std::string& text, Type type)
     START(find);
     DEBUG("Call find");
     std::vector<Element> result;
-    static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::multiline);
-    static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::multiline);
-    static const std::regex doc_para(DOC_PARAGRAPH_SIGNS, std::regex::multiline);
+    static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::ECMAScript | std::regex::multiline);
+    static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::ECMAScript | std::regex::multiline);
+    static const std::regex doc_para(DOC_PARAGRAPH_SIGNS, std::regex::ECMAScript);
     const std::regex* rx = nullptr;
     switch (type) {
         case Type::Header: rx = &doc_header; break;
