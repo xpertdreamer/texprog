@@ -134,13 +134,12 @@ struct Element {
  *
  * - '^' - start of the line
  * - '={1,6}' - literal '=' repeated 1-6 times
- * - '\s+' - one or more whitespaces
+ * - '[ \t]+' - at least one space or tabulation
  * - '(.+)' - any text (at least one character)
  * - '$' - end of the line
  */
-#define WDOC_HEADER_SIGNS     LR"(^={1,6}\s+(.+)$)"
 
-#define DOC_HEADER_SIGNS     R"(^={1,6}\s+(.+)$)"
+#define DOC_HEADER_SIGNS     R"(^={1,6}[ \t]+(.+)$)"
 
 /**
  * @def DOC_LIST_SIGNS
@@ -167,17 +166,12 @@ struct Element {
  * @details Regex breakdown:
  *
  * - '(?:^|\n\n)' - start of text, or a blank line before the paragraph
- * - '[a-zA-Z0-9"'\x80-\xFF]' - first character of the line: Latin letter,
- *   digit, quote, or a byte belonging to a non-ASCII character (covers
- *   Cyrillic and other scripts in UTF-8)
+ * - '[a-zA-Z0-9"'\x80-\xFF]' - first character of the line
  * - '[^\n]*' - any characters until a space
- * - '[ \t]' - a space or tab, needed so single-word lines (like a
- *   delimiter or a macro call) are not treated as paragraphs
+ * - '[ \t]' - a space or tab, needed so single-word lines
  * - '[^\n]*' - the rest of the line
- * - '(?:\n[a-zA-Z0-9"'\x80-\xFF][^\n]*[ \t][^\n]*)*' - more lines of the
- *   same paragraph, each following the same rule
- * - '(?=\n\n|$)' - a blank line or the end of the document after the
- *   paragraph
+ * - '(?:\n[a-zA-Z0-9"'\x80-\xFF][^\n]*[ \t][^\n]*)*' - more lines of the same paragraph, each following the same rule
+ * - '(?=\n\n|$)' - a blank line or the end of the document after the paragraph
  */
 #define DOC_PARAGRAPH_SIGNS R"((?:^|\n\n)([a-zA-Z0-9"'\x80-\xFF][^\n]*[ \t][^\n]*(?:\n[a-zA-Z0-9"'\x80-\xFF][^\n]*[ \t][^\n]*)*)(?=\n\n|$))"
 //#define DOC_PARAGRAPH_SIGNS R"(^\s*[а-яА-ЯёЁa-zA-Z0-9][^\n]*\n\s*$)"
