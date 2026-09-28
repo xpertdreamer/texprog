@@ -117,15 +117,22 @@ Parser::find(const std::string& text, Type type)
         case Type::Paragraph: rx = &doc_para; break;
     }
     if (!rx) return result;
+    DEBUG("Call find iterator");
     auto begin = std::sregex_iterator(text.begin(), text.end(), *rx);
     auto end   = std::sregex_iterator();
+    size_t curr_line = 1;
+    size_t match_count = 0;
+    auto last = text.begin();
     for (auto it = begin; it != end; ++it) {
         const std::smatch& match = *it;
-        size_t line = 1 + std::count(text.begin(), text.begin() + match.position(),'\n');
+        //size_t line = 1 + std::count(text.begin(), text.begin() + match.position(),'\n');
+        auto current_pos = text.begin() + match.position();
+        curr_line += std::count(last, current_pos, '\n');
+        last = current_pos;
         Element element = {
             .type  = type,
             .text  = "",
-            .line  = line,
+            .line  = curr_line,
             .level = 0,
         };
         if (type == Type::Header) {
@@ -145,6 +152,10 @@ Parser::find(const std::string& text, Type type)
         }
         if (element.text.empty() && match.size() > 0) {
             element.text = match.str();
+        }
+        match_count++;
+        if (match_count % 100000 == 0 ) {
+            DEBUG("Elements added: %ld", match_count);
         }
         result.push_back(std::move(element));
     }
