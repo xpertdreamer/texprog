@@ -1,12 +1,24 @@
 #include "uploader.h"
 #include "util.h"
 #include <fstream>
+#include <ios>
 #include <sstream>
 #include <string>
+#include <iostream>
+#include <vector>
+
+bool
+Uploader::stream_bad()
+{
+    return file.bad();
+}
 
 std::string
 Uploader::upload_file(const std::string& path)
 {
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(NULL);
+
     START(upload_file);
     DEBUG("Call upload_file");
     DEBUG("PATH: %s", path.c_str());
@@ -46,4 +58,21 @@ Uploader::upload_stdin()
     DEBUG("Input successfully readen");
     END(upload_stdin);
     return ss.str();
+}
+
+std::streamsize
+Uploader::upload_batch()
+{
+    DEBUG("Call uploader::upload_batch");
+    if (!file.is_open()) { ERROR("File not opened!"); return 0; }
+    file.read(buffer.data(), batch_size);
+    std::streamsize count = file.gcount();
+    DEBUG("Count=%ld", count);
+    return count;
+}
+
+bool
+Uploader::has_more_batches()
+{
+    return file.good();
 }

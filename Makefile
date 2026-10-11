@@ -25,8 +25,15 @@ lab2: lab_2/lab2.cpp lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp
 lab3s: lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp
 	@mkdir -p build/lab_3
 	g++ -Wall -Wextra -c lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp -DDEBUG_MODE=$(DEBUG)
-	ar rvs build/lab_3/lab_2.a parser.o uploader.o validator.o
+	ar rvs build/lab_3/liblab2.a parser.o uploader.o validator.o
 	rm -f parser.o uploader.o validator.o
 	cp lab_2/parser.h lab_2/uploader.h lab_2/validator.h lab_3
-	cp build/lab_3/lab_2.a lab_3
-	g++ -Wall -Wextra lab_3/test.cpp -Llab_3 -l:lab_2.a -o build/lab_3/lab3
+	cp build/lab_3/liblab2.a lab_3
+	g++ -Wall -Wextra lab_3/test.cpp -Llab_3 -l:liblab2.a -o build/lab_3/lab3s
+
+lab3d: lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp
+	@mkdir -p build/lab_3
+	g++ -Wall -Wextra -fPIC -shared	lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp -DDEBUG_MODE=$(DEBUG) -o build/lab_3/liblab2.so
+	cp lab_2/parser.h lab_2/uploader.h lab_2/validator.h lab_3
+	cp build/lab_3/liblab2.so lab_3
+	g++ -Wall -Wextra -Ilab_2 lab_3/test.cpp -Lbuild/lab_3 -l:liblab2.so -o lab_3/lab3d

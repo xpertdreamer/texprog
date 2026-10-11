@@ -5,6 +5,16 @@
 #include <regex>
 #include <string>
 
+static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::ECMAScript | std::regex::multiline);
+static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::ECMAScript | std::regex::multiline);
+static const std::regex doc_para(DOC_PARAGRAPH_SIGNS, std::regex::ECMAScript);
+static const std::regex html_header(HTML_HEADER_SIGNS, std::regex::multiline);
+static const std::regex html_paragraph(HTML_PARAGRAPH_SIGNS, std::regex::multiline);
+static const std::regex html_list(HTML_LIST_SIGNS, std::regex::multiline);
+static const std::regex md_header(MD_HEADER_SIGNS, std::regex::multiline);
+static const std::regex md_unordered(MD_UNORDERED_SIGNS, std::regex::multiline);
+static const std::regex md_ordered(MD_ORDERED_SIGNS, std::regex::multiline);
+
 constexpr int HEADER_SCORE = 10;
 constexpr int HTMLTAG_SCORE = 5;
 constexpr int UNORDERED_SCORE = 2;
@@ -76,9 +86,6 @@ int
 Parser::is_html(const std::string& text)
 {
     DEBUG("Call is_html");
-    static const std::regex html_header(HTML_HEADER_SIGNS, std::regex::multiline);
-    static const std::regex html_paragraph(HTML_PARAGRAPH_SIGNS, std::regex::multiline);
-    static const std::regex html_list(HTML_LIST_SIGNS, std::regex::multiline);
     return HTMLTAG_SCORE * count(text, html_header) + HTMLTAG_SCORE * count(text, html_paragraph) + HTMLTAG_SCORE * count(text, html_list);
 }
 
@@ -86,9 +93,6 @@ int
 Parser::is_markdown(const std::string& text)
 {
     DEBUG("Call is_markdown");
-    static const std::regex md_header(MD_HEADER_SIGNS, std::regex::multiline);
-    static const std::regex md_unordered(MD_UNORDERED_SIGNS, std::regex::multiline);
-    static const std::regex md_ordered(MD_ORDERED_SIGNS, std::regex::multiline);
     return HEADER_SCORE * count(text, md_header) + UNORDERED_SCORE * count(text, md_unordered) + ORDERED_SCORE * count(text, md_ordered);
 }
 
@@ -96,20 +100,15 @@ int
 Parser::is_asciidoc(const std::string& text)
 {
     DEBUG("Call is_asciidoc");
-    static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::multiline);
-    static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::multiline);
     return HEADER_SCORE * count(text, doc_header) + UNORDERED_SCORE * count(text, doc_list);
 }
 
 std::vector<Element>
-Parser::find(const std::string& text, Type type)
+Parser::find(const std::string& text, Type type, std::size_t start_line)
 {
     START(find);
     DEBUG("Call find");
     std::vector<Element> result;
-    static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::ECMAScript | std::regex::multiline);
-    static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::ECMAScript | std::regex::multiline);
-    static const std::regex doc_para(DOC_PARAGRAPH_SIGNS, std::regex::ECMAScript);
     const std::regex* rx = nullptr;
     switch (type) {
         case Type::Header: rx = &doc_header; break;
@@ -120,7 +119,7 @@ Parser::find(const std::string& text, Type type)
     DEBUG("Call find iterator");
     auto begin = std::sregex_iterator(text.begin(), text.end(), *rx);
     auto end   = std::sregex_iterator();
-    size_t curr_line = 1;
+    size_t curr_line = start_line;
     size_t match_count = 0;
     auto last = text.begin();
     for (auto it = begin; it != end; ++it) {

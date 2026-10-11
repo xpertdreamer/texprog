@@ -6,10 +6,13 @@
 #include <cstdio>
 #include <cstdlib>
 #include <getopt.h>
+#include <ios>
 #include <stdexcept>
 #include <string>
 #include <unistd.h>
 #include <iomanip>
+
+constexpr std::size_t BATCH = 512 * 1024 * 1024;
 
 /**
  * @def FLAGS
@@ -86,17 +89,43 @@ main(int argc, char** argv)
             return EXIT_SUCCESS;
         }
         if (p_providen && f_providen) {
-            std::string text = Uploader::upload_file(path);
-            if (!Parser::validate(text, Format::AsciiDoc)) return EXIT_FAILURE;
-            std::vector<Element> res = Parser::find(text, type);
-            std::freopen(nullptr, "w", stdout);
-            std::cout << "Found:" << std::endl;
-            for (const auto &it : res) {
-                std::cout << std::left << std::setw(100) << it.text << std::left <<std::setw(10) << "\t" << "line=" << it.line;
-                if (it.type == Type::Header) {
-                    std::cout << std::right << std::setw(10) << "\tlevel=" << static_cast<int>(it.level);
+            try {
+                Uploader up(path, BATCH);
+                DEBUG("batch size=%ld", up.get_size());
+                std::vector<Element> res;
+                DEBUG("Vector res allocated");
+                std::size_t line_ofs = 1;
+                while (true) {
+                    std::streamsize read = up.upload_batch();
+                    if (read <= 0) {
+                        break;
+                    }
+                    std::string text(up.get_buf().data(), read);
+                    //DEBUG("Text=%s", text.c_str());
+                    std::vector b = Parser::find(text, type, line_ofs);
+                    res.insert(res.end(), b.begin(), b.end());
+                    line_ofs += static_cast<std::size_t>(std::count(text.begin(), text.end(), '\n'));
                 }
-                std::cout << std::endl;
+                //std::string text = Uploader::upload_file(path);
+//            if (!Parser::validate(text, Format::AsciiDoc)) return EXIT_FAILURE;
+                //std::vector<Element> res = Parser::find(text, type);
+                //std::freopen(nullptr, "w", stdout);
+                if (up.stream_bad()) {
+                    ERROR("io error while reading");
+                    return 1;
+                }
+
+                std::cout << "Found:" << std::endl;
+                for (const auto &it : res) {
+                    std::cout << std::left << std::setw(100) << it.text << std::left <<std::setw(10) << "\t" << "line=" << it.line;
+                    if (it.type == Type::Header) {
+                        std::cout << std::right << std::setw(10) << "\tlevel=" << static_cast<int>(it.level);
+                    }
+                    std::cout << "\n";
+                }
+                std::cout << "Batch size: " << BATCH << std::endl;
+            } catch(std::exception& e) {
+                std::cout << e.what() << std::endl;
             }
         }
         else {

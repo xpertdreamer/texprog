@@ -174,9 +174,6 @@ struct Element {
  * - '(?=\n\n|$)' - a blank line or the end of the document after the paragraph
  */
 #define DOC_PARAGRAPH_SIGNS R"((?:^|\n\n)([a-zA-Z0-9"'\x80-\xFF][^\n]*[ \t][^\n]*(?:\n[a-zA-Z0-9"'\x80-\xFF][^\n]*[ \t][^\n]*)*)(?=\n\n|$))"
-//#define DOC_PARAGRAPH_SIGNS R"(^\s*[а-яА-ЯёЁa-zA-Z0-9][^\n]*\n\s*$)"
-// #define DOC_PARAGRAPH_SIGNS \
-//     R"(^(?!\s*$).+(?:\n(?!\s*$).+)*)"
 
 /**
  * @class Parser
@@ -239,7 +236,7 @@ class Parser {
          * @return Vector of found Element objects
          */
         static std::vector<Element>
-        find(const std::string& text, Type type);
+        find(const std::string& text, Type type, std::size_t start_line = 1);
 };
 
 #endif
