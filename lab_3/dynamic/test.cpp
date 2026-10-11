@@ -2,12 +2,11 @@
 #include "uploader.h"
 
 #include <string>
-#include <iostream>
 
 int
 main(void)
 {
-    std::string init = Uploader::upload_file("docs/html/cmd_8h.html");
+    std::string init = Uploader::upload_file("docs/README.md");
     Format detection = Parser::detect(init);
     std::wcout << Parser::to_string(detection) << std::endl;
     return 0;

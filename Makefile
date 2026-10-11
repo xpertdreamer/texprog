@@ -22,18 +22,44 @@ lab2: lab_2/lab2.cpp lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp
 	g++ -Wall -Wextra $^ -o build/lab_2/lab2 -Ofast -march=native
 	$(call run_doxygen)
 
-lab3s: lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp
-	@mkdir -p build/lab_3
-	g++ -Wall -Wextra -c lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp -DDEBUG_MODE=$(DEBUG)
-	ar rvs build/lab_3/liblab2.a parser.o uploader.o validator.o
-	rm -f parser.o uploader.o validator.o
-	cp lab_2/parser.h lab_2/uploader.h lab_2/validator.h lab_3
-	cp build/lab_3/liblab2.a lab_3
-	g++ -Wall -Wextra lab_3/test.cpp -Llab_3 -l:liblab2.a -o build/lab_3/lab3s
+lab3s: lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp lab_3/static/test.cpp
+	@mkdir -p build/lab_3/obj
 
-lab3d: lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp
+	g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+		-c lab_2/parser.cpp    -o build/lab_3/obj/parser.o
+	g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+		-c lab_2/uploader.cpp  -o build/lab_3/obj/uploader.o
+	g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+		-c lab_2/validator.cpp -o build/lab_3/obj/validator.o
+
+	ar rvs build/lab_3/liblab2.a \
+		build/lab_3/obj/parser.o \
+		build/lab_3/obj/uploader.o \
+		build/lab_3/obj/validator.o
+
+	g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+		lab_3/static/test.cpp \
+		-Lbuild/lab_3 -l:liblab2.a \
+		-o build/lab_3/lab3s
+
+lab3d: lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp lab_3/dynamic/test.cpp
 	@mkdir -p build/lab_3
-	g++ -Wall -Wextra -fPIC -shared	lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp -DDEBUG_MODE=$(DEBUG) -o build/lab_3/liblab2.so
-	cp lab_2/parser.h lab_2/uploader.h lab_2/validator.h lab_3
-	cp build/lab_3/liblab2.so lab_3
-	g++ -Wall -Wextra -Ilab_2 lab_3/test.cpp -Lbuild/lab_3 -l:liblab2.so -o lab_3/lab3d
+	g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+		-fPIC -shared \
+		lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp \
+		-o build/lab_3/liblab2.so
+
+		g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+		lab_3/dynamic/test.cpp \
+		-Lbuild/lab_3 -l:liblab2.so \
+		-Wl,-rpath,'$$ORIGIN' \
+		-o build/lab_3/lab3d
+
+lab3r: lab_2/parser.cpp lab_2/uploader.cpp lab_3/runtime/api.cpp lab_3/runtime/test.cpp
+	@mkdir -p build/lab_3
+	g++ -Wall -Wextra -Ilab_2 -fPIC -shared -std=c++20 \
+		lab_2/parser.cpp lab_2/uploader.cpp lab_3/runtime/api.cpp \
+		-o build/lab_3/liblab2.so
+	g++ -Wall -Wextra -std=c++20 \
+		lab_3/runtime/test.cpp -ldl \
+		-o build/lab_3/lab3r
