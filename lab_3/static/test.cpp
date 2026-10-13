@@ -4,10 +4,12 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <iomanip>
 
 int
 main(int argc, char* argv[])
 {
+    constexpr std::size_t BATCH = 1024 * 1024 * 100;
     std::string path;
     if (argc > 1) {
         path = std::string(argv[1]);
@@ -22,7 +24,7 @@ main(int argc, char* argv[])
                 break;
             }
             std::string text(up.get_buf().data(), read);
-            std::vector b = Parser::find(text, type, line_ofs);
+            std::vector b = Parser::find(text, Type::Header, line_ofs);
             res.insert(res.end(), b.begin(), b.end());
             line_ofs += static_cast<std::size_t>(std::count(text.begin(), text.end(), '\n'));
         }
