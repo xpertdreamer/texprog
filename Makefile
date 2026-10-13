@@ -37,7 +37,7 @@ lab3s: lab_2/parser.cpp lab_2/uploader.cpp lab_2/validator.cpp lab_3/static/test
 		build/lab_3/obj/uploader.o \
 		build/lab_3/obj/validator.o
 
-	g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+	g++ -Wall -Wextra -Ilab_2 -g -DDEBUG_MODE=$(DEBUG) \
 		lab_3/static/test.cpp \
 		-Lbuild/lab_3 -l:liblab2.a \
 		-o build/lab_3/lab3s
@@ -60,6 +60,11 @@ lab3r: lab_2/parser.cpp lab_2/uploader.cpp lab_3/runtime/api.cpp lab_3/runtime/t
 	g++ -Wall -Wextra -Ilab_2 -fPIC -shared -std=c++20 \
 		lab_2/parser.cpp lab_2/uploader.cpp lab_3/runtime/api.cpp \
 		-o build/lab_3/liblab2.so
-	g++ -Wall -Wextra -std=c++20 \
+	g++ -Wall -Wextra \
 		lab_3/runtime/test.cpp -ldl \
 		-o build/lab_3/lab3r
+
+lab4: lab_4/lab4.cpp
+	@mkdir -p build/lab_4
+	g++ -Wall -Wextra $^ -o build/lab_2/lab2
+	$(call run_doxygen)
