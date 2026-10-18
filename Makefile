@@ -80,5 +80,5 @@ lab3r: lab_2/parser.cpp lab_2/uploader.cpp lab_3/runtime/api.cpp lab_3/runtime/t
 
 lab4: lab_4/lab4.cpp
 	@mkdir -p build/lab_4
-	g++ -Wall -Wextra $^ -o build/lab_2/lab2
+	g++ -Wall -Wextra -Ilab_4  $^ -o build/lab_4/lab4
 	$(call run_doxygen)
