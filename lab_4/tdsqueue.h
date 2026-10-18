@@ -52,4 +52,7 @@ public:
     size();
 };
 
+
+#include "tdsqueue.cpp"
+
 #endif

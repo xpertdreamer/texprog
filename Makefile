@@ -1,5 +1,10 @@
 DOX ?= 0
 DEBUG ?= 0
+LAB ?= lab_4
+
+ifeq ($(LAB), lab_4)
+	TEST_INCS = -Ilab_4
+endif
 
 define run_doxygen
 	@if [ "$(DOX)" = "1" ]; then \
@@ -11,6 +16,15 @@ endef
 clean:
 	rm -rf build/
 	rm -rf docs/html/
+
+test:
+	@if [ ! -f "tests/test_$(LAB).cpp" ]; then \
+		echo "Error: Test file tests/test_$(LAB).cpp not found!"; \
+		exit 1; \
+	fi
+	@mkdir -p build/tests
+	g++ -Wall -Wextra $(TEST_INCS) -Itests tests/test_$(LAB).cpp $(TEST_SRCS) -o build/tests/run_tests_$(LAB)
+	./build/tests/run_tests_$(LAB)
 
 lab1: lab_1/main.cpp lab_1/counter.cpp lab_1/cmd.cpp lab_1/stl.cpp
 	@mkdir -p build/lab_1
