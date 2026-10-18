@@ -1,12 +1,18 @@
 #ifndef UI_H
 #define UI_H
 
+#include "watcher.h"
+#include "tdsqueue.h"
+
 #include <cctype>
 #include <cstdlib>
+#include <filesystem>
+#include <memory>
 #include <string>
 #include <iostream>
 #include <functional>
 #include <algorithm>
+#include <thread>
 
 struct query {
     std::string name;
@@ -15,8 +21,12 @@ struct query {
 };
 
 struct ui_handler {
-    std::array<query, 2> qs;
+    std::array<query, 3> qs;
     char prompt;
+
+    std::unique_ptr<TdSQueue<std::filesystem::directory_entry>> queue;
+    std::unique_ptr<Watcher> w;
+    std::thread watch_thread;
 
     ui_handler(char p) {
         prompt = p;
@@ -27,10 +37,21 @@ struct ui_handler {
                     std::cout << qs[i].name << " - " << qs[i].description << std::endl;
                 }
             }},
-            { "EXIT", "exit)", [this]() {
+
+            { "EXIT", "exit", [this]() {
                 std::exit(0);
-            }}
+            }},
+
+            {"START", "start to execute watcher", [this]() {
+                queue = std::make_unique<TdSQueue<std::filesystem::directory_entry>>();
+                w = std::make_unique<Watcher>(std::filesystem::current_path());
+                watch_thread = std::thread(&Watcher::watch, w.get());
+            }},
         }};
+    }
+
+    ~ui_handler() {
+        watch_thread.detach();
     }
 
     inline void
@@ -42,7 +63,7 @@ struct ui_handler {
 };
 
 inline void
-process(ui_handler handler) {
+process(ui_handler& handler) {
     while (true) {
         std::cout << handler.prompt << ' ';
         std::string input;
@@ -51,9 +72,11 @@ process(ui_handler handler) {
         for (auto &q : handler.qs) {
             if (q.name == input) {
                 q.handler();
+                break;
             }
         }
     }
+
 }
 
 #endif
