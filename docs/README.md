@@ -137,3 +137,4 @@ List of targets:
   - <https://habr.com/ru/articles/985066/>
   - <https://github.com/doctest/doctest>
   - <https://stackoverflow.com/questions/495021/why-can-templates-only-be-implemented-in-the-header-file>
+  - <https://stackoverflow.com/questions/735204/convert-a-string-in-c-to-upper-case>
