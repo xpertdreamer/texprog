@@ -7,6 +7,8 @@
 - [Make commands](#make-commands)
 - [Laboratory Work 1](#laboratory-work-1)
 - [Laboratory Work 2](#laboratory-work-2)
+- [Laboratory Work 3](#laboratory-work-3)
+- [Laboratory Work 4](#laboratory-work-4)
 
 ## Build systems
 
@@ -83,6 +85,10 @@ List of targets:
 
   - lab1 - Laboratory Work №1
   - lab2 - Laboratory Work №2
+  - lab3d, lab3s, lab3r - Laboratory Work №3
+  - lab4 - Laboratory Work №4
+  - clean - clean build directory
+  - test <target> - compile and run tests
 
 ## Laboratory Work 1
 ### References:
@@ -115,3 +121,19 @@ List of targets:
   - <https://stackoverflow.com/questions/2573834/c-convert-string-or-char-to-wstring-or-wchar-t>
   - <https://cplusplus.com/reference/sstream/wstringstream/>
   - <https://www.c-cpp.ru/content/freopen>
+
+## Laboratory Work 3
+### References:
+
+  - <https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html>
+  - <https://stackoverflow.com/questions/52000977/gcc-compiling-and-linking>
+  - <https://www.etherbot.in/blog/runtime-dynamic-linking-in-c-cpp-dlopen-dlsym-and-the-art-of-loading-libraries-at-runtime>
+
+## Laboratory Work 4
+### References:
+
+  - <https://stackoverflow.com/questions/115703/storing-c-template-function-definitions-in-a-cpp-file>
+  - <https://isocpp.org/wiki/faq/templates#templates-defn-vs-decl>
+  - <https://habr.com/ru/articles/985066/>
+  - <https://github.com/doctest/doctest>
+  - <https://stackoverflow.com/questions/495021/why-can-templates-only-be-implemented-in-the-header-file>
