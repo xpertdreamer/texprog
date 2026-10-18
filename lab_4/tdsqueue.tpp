@@ -1,4 +1,3 @@
-#include "tdsqueue.h"
 #include "util.h"
 
 template<typename T>
