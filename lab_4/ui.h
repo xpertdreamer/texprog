@@ -5,6 +5,7 @@
 #include "tdsqueue.h"
 
 #include <cctype>
+#include <csignal>
 #include <cstdlib>
 #include <filesystem>
 #include <memory>
@@ -13,6 +14,13 @@
 #include <functional>
 #include <algorithm>
 #include <thread>
+
+volatile inline sig_atomic_t stop = 0;
+
+inline void
+handler(int) {
+    stop = 1;
+}
 
 struct query {
     std::string name;
@@ -80,7 +88,7 @@ struct ui_handler {
 
 inline void
 process(ui_handler& handler) {
-    while (handler.yes) {
+    while (handler.yes && !stop) {
         std::cout << handler.prompt << ' ';
         std::string input;
         std::cin >> input;
