@@ -5,7 +5,7 @@ cd "$(dirname "$0")"
 if [ $# -lt 1 ]; then
     echo "ERROR: No program specified!"
     echo "Usage: $0 <program_name> [arguments...]"
-    echo "Available programs: lab1, lab2"
+    echo "Available programs: lab1, lab2, lab4"
     exit 1
 fi
 
@@ -20,6 +20,9 @@ case "$CHOICE" in
         ;;
     "lab2")
         ./build/lab_2/lab2 "$@"
+        ;;
+    "lab4")
+        ./build/lab_4/lab4 "$@"
         ;;
     *)
         echo "ERROR: Program '$CHOICE' is not supported."
