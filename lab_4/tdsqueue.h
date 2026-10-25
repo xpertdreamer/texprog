@@ -9,6 +9,15 @@
 #include <mutex>
 #include <queue>
 
+template<typename T>
+struct Node {
+    T data;
+    Node* next;
+
+    Node(const T& d) : data(d), next(nullptr) {}
+    ~Node() = default;
+};
+
 /**
  * @class TdSQueue
  * @brief A thread-safe wrapper around the standard library's `queue` class using mutex
@@ -17,7 +26,8 @@
 template<typename T>
 class TdSQueue {
 private:
-    std::queue<T> queue; ///< Underlying standard queue.
+    size_t size;
+    Node<T>* head;
     std::mutex mutex; ///< Mutex to guard access
 public:
     TdSQueue() = default;
@@ -49,7 +59,13 @@ public:
     * @return Number of elements in the queue
     */
     std::size_t
-    size();
+    get_size();
+
+    void
+    peek();
+
+    bool
+    contains(T t);
 };
 
 #include "tdsqueue.tpp"
