@@ -66,6 +66,9 @@ public:
 
     bool
     contains(T t);
+
+    void
+    drop();
 };
 
 #include "tdsqueue.tpp"

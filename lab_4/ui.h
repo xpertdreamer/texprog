@@ -29,7 +29,7 @@ struct query {
 };
 
 struct ui_handler {
-    std::array<query, 4> qs;
+    std::array<query, 6> qs;
     char prompt;
     bool yes = true;
 
@@ -37,7 +37,7 @@ struct ui_handler {
     std::unique_ptr<Watcher> w;
     std::thread watch_thread;
 
-    ui_handler(char p) {
+    ui_handler(char p, char* path) {
         prompt = p;
         qs = {{
             {"HELP", "show help message", [this]() {
@@ -51,16 +51,29 @@ struct ui_handler {
                 yes = false;
             }},
 
-            {"START", "start to execute watcher", [this]() {
+            {"START", "start to execute watcher", [this, path]() {
                 if (watch_thread.joinable()) return;
                 queue = std::make_unique<TdSQueue<std::filesystem::directory_entry>>();
-                w = std::make_unique<Watcher>(std::filesystem::current_path());
+                w = std::make_unique<Watcher>(path);
                 watch_thread = std::thread(&Watcher::watch, w.get(), queue.get());
             }},
 
             {"DUMP", "show status of queue", [this]() {
                 if (queue) {
                     queue->peek();
+                }
+            }},
+            {"CHANGE", "change the directory being watching", [this]() {
+            if (queue && w) {
+                std::cout << "New directory: ";
+                std::string input;
+                std::cin >> input;
+                w->change_path(input);
+            }
+        }},
+            {"DROP", "reset state of the current queue", [this]() {
+                if (queue) {
+                    queue->drop();
                 }
             }},
         }};

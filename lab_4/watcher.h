@@ -17,6 +17,9 @@ public:
     void
     watch(TdSQueue<std::filesystem::directory_entry> *q);
 
+    void
+    change_path(const std::string& path);
+
     inline bool
     watching()
     {

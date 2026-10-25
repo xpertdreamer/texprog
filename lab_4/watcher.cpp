@@ -20,3 +20,14 @@ Watcher::watch(TdSQueue<std::filesystem::directory_entry> *q)
         }
     }
 }
+
+void
+Watcher::change_path(const std::string& _path)
+{
+    if (!std::filesystem::exists(_path) || !std::filesystem::is_directory(_path)) {
+        ERROR("cannot change path: it is not a directory");
+        return;
+    }
+
+    path = _path;
+}

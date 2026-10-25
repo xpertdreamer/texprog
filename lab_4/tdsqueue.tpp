@@ -94,3 +94,19 @@ TdSQueue<T>::contains(T t)
     mutex.unlock();
     return false;
 }
+
+template<typename T>
+void
+TdSQueue<T>::drop()
+{
+    mutex.lock();
+    if (size == 0) { mutex.unlock(); return; }
+    for (auto curr = head; curr != nullptr;) {
+        auto next = curr->next;
+        delete curr;
+        curr = next;
+    }
+    head = nullptr;
+    size = 0;
+    mutex.unlock();
+}
