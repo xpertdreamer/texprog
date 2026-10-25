@@ -21,7 +21,7 @@ struct query {
 };
 
 struct ui_handler {
-    std::array<query, 3> qs;
+    std::array<query, 4> qs;
     char prompt;
     bool yes = true;
 
@@ -49,6 +49,12 @@ struct ui_handler {
                 w = std::make_unique<Watcher>(std::filesystem::current_path());
                 watch_thread = std::thread(&Watcher::watch, w.get(), queue.get());
             }},
+
+            {"DUMP", "show status of queue", [this]() {
+                if (queue) {
+                    queue->peek();
+                }
+            }},
         }};
     }
 
@@ -60,7 +66,7 @@ struct ui_handler {
         }
         if (watch_thread.joinable()) watch_thread.join();
         if (queue) {
-            std::cout << queue->size() << std::endl;
+            std::cout << queue->get_size() << std::endl;
         }
     }
 
