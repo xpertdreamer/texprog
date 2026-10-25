@@ -138,3 +138,5 @@ List of targets:
   - <https://github.com/doctest/doctest>
   - <https://stackoverflow.com/questions/495021/why-can-templates-only-be-implemented-in-the-header-file>
   - <https://stackoverflow.com/questions/735204/convert-a-string-in-c-to-upper-case>
+  - <https://en.cppreference.com/cpp/container/queue>
+  - <https://stackoverflow.com/questions/9615706/how-can-i-handle-interrupt-signal-and-call-destructor-in-c>
