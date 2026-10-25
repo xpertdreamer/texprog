@@ -1,14 +1,23 @@
 #include "watcher.h"
 
-#include <filesystem>
+#include "tdsqueue.h"
 #include "util.h"
 
+#include <chrono>
+#include <filesystem>
+#include <thread>
+
 void
-Watcher::watch()
+Watcher::watch(TdSQueue<std::filesystem::directory_entry> *q)
 {
-    for(;;) {
+    yes = true;
+    while(yes) {
         for (const auto& entry : std::filesystem::directory_iterator(path)) {
-            DEBUG("%s\n", entry.path().c_str());
+            if (std::filesystem::is_regular_file(entry.status())) {
+                DEBUG("%s\n", entry.path().c_str());
+                q->push(entry);
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
     }
 }

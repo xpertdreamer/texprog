@@ -23,6 +23,7 @@ struct query {
 struct ui_handler {
     std::array<query, 3> qs;
     char prompt;
+    bool yes = true;
 
     std::unique_ptr<TdSQueue<std::filesystem::directory_entry>> queue;
     std::unique_ptr<Watcher> w;
@@ -39,19 +40,28 @@ struct ui_handler {
             }},
 
             { "EXIT", "exit", [this]() {
-                std::exit(0);
+                yes = false;
             }},
 
             {"START", "start to execute watcher", [this]() {
+                if (watch_thread.joinable()) return;
                 queue = std::make_unique<TdSQueue<std::filesystem::directory_entry>>();
                 w = std::make_unique<Watcher>(std::filesystem::current_path());
-                watch_thread = std::thread(&Watcher::watch, w.get());
+                watch_thread = std::thread(&Watcher::watch, w.get(), queue.get());
             }},
         }};
     }
 
     ~ui_handler() {
-        watch_thread.detach();
+        if (w) {
+            if (w->watching()) {
+                w->stop();
+            }
+        }
+        if (watch_thread.joinable()) watch_thread.join();
+        if (queue) {
+            std::cout << queue->size() << std::endl;
+        }
     }
 
     inline void
@@ -64,7 +74,7 @@ struct ui_handler {
 
 inline void
 process(ui_handler& handler) {
-    while (true) {
+    while (handler.yes) {
         std::cout << handler.prompt << ' ';
         std::string input;
         std::cin >> input;
