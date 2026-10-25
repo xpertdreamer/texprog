@@ -64,13 +64,13 @@ struct ui_handler {
                 }
             }},
             {"CHANGE", "change the directory being watching", [this]() {
-            if (queue && w) {
-                std::cout << "New directory: ";
-                std::string input;
-                std::cin >> input;
-                w->change_path(input);
-            }
-        }},
+                if (queue && w) {
+                    std::cout << "New directory: ";
+                    std::string input;
+                    std::cin >> input;
+                    w->change_path(input);
+                }
+            }},
             {"DROP", "reset state of the current queue", [this]() {
                 if (queue) {
                     queue->drop();
