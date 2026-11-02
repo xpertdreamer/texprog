@@ -1,7 +1,6 @@
 #ifndef UI_H
 #define UI_H
 
-#include "watcher.h"
 #include "tdsqueue.h"
 
 #include <cctype>
@@ -29,13 +28,9 @@ struct query {
 };
 
 struct ui_handler {
-    std::array<query, 6> qs;
+    std::array<query, 7> qs;
     char prompt;
     bool yes = true;
-
-    std::unique_ptr<TdSQueue<std::filesystem::directory_entry>> queue;
-    std::unique_ptr<Watcher> w;
-    std::thread watch_thread;
 
     ui_handler(char p, char* path) {
         prompt = p;
@@ -50,45 +45,11 @@ struct ui_handler {
             { "EXIT", "exit", [this]() {
                 yes = false;
             }},
-
-            {"START", "start to execute watcher", [this, path]() {
-                if (watch_thread.joinable()) return;
-                queue = std::make_unique<TdSQueue<std::filesystem::directory_entry>>();
-                w = std::make_unique<Watcher>(path);
-                watch_thread = std::thread(&Watcher::watch, w.get(), queue.get());
-            }},
-
-            {"DUMP", "show status of queue", [this]() {
-                if (queue) {
-                    queue->peek();
-                }
-            }},
-            {"CHANGE", "change the directory being watching", [this]() {
-                if (queue && w) {
-                    std::cout << "New directory: ";
-                    std::string input;
-                    std::cin >> input;
-                    w->change_path(input);
-                }
-            }},
-            {"DROP", "reset state of the current queue", [this]() {
-                if (queue) {
-                    queue->drop();
-                }
-            }},
         }};
     }
 
     ~ui_handler() {
-        if (w) {
-            if (w->watching()) {
-                w->stop();
-            }
-        }
-        if (watch_thread.joinable()) watch_thread.join();
-        if (queue) {
-            std::cout << queue->get_size() << std::endl;
-        }
+        // TODO
     }
 
     inline void

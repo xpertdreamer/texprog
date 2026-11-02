@@ -1,36 +1,21 @@
 #ifndef WATCHER_H
 #define WATCHER_H
 
-#include "util.h"
 #include "tdsqueue.h"
-
-#include <string>
 #include <filesystem>
 
+typedef std::filesystem::directory_entry dirent;
+
 class Watcher {
-private:
-    std::string path;
-    bool yes = false;
-public:
-    Watcher(std::string p) : path(p) { DEBUG("watcher constructor"); }
+    private:
+        TdSQueue<dirent> queue;
+        // TODO: table
+    public:
+        // TODO: watch
 
-    void
-    watch(TdSQueue<std::filesystem::directory_entry> *q);
+        ~Watcher() {
 
-    void
-    change_path(const std::string& path);
-
-    inline bool
-    watching()
-    {
-        return yes;
-    }
-
-    inline void
-    stop()
-    {
-        yes = false;
-    }
+        }
 };
 
 #endif

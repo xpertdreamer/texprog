@@ -61,12 +61,23 @@ public:
     std::size_t
     get_size();
 
+    /**
+    * @brief Prints all queue elements
+    */
     void
     peek();
 
+    /**
+    * @brief Checks if queue contains given element
+    * @param t Element to search
+    * @return Boolean value
+    */
     bool
     contains(T t);
 
+    /**
+    * @brief Delete queue
+    */
     void
     drop();
 };
