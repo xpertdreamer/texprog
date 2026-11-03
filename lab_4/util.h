@@ -8,6 +8,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <format>
 
 #include "conf.h"
 
@@ -33,7 +34,7 @@ do {                                                                \
     if (DEBUG_MODE) {                                               \
         std::cerr << DEBUG_COLOR << "DEBUG(" << __FILE__            \
                   << ':' << __LINE__ << "):" << RESET_COLOR << " "; \
-        std::clog << std::format(fmt, __VA_ARGS__) << '\n';         \
+        std::clog << std::format(fmt, ##__VA_ARGS__) << '\n';       \
     }                                                               \
 } while (0)
 
@@ -47,7 +48,7 @@ do {                                                                \
 do {                                                            \
     std::cerr << ERROR_COLOR << "ERROR(" << __FILE__            \
               << ':' << __LINE__ << "):" << RESET_COLOR << " "; \
-    std::cerr << std::format(fmt, __VA_ARGS__) << '\n';         \
+    std::cerr << std::format(fmt, ##__VA_ARGS__) << '\n';       \
 } while (0)
 
 /**
