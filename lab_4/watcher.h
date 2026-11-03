@@ -3,19 +3,27 @@
 
 #include "tdsqueue.h"
 #include <filesystem>
+#include <unordered_set>
 
-typedef std::filesystem::directory_entry dirent;
+namespace stdfs = std::filesystem;
+
+// TODO: results struct
 
 class Watcher {
     private:
-        TdSQueue<dirent> queue;
-        // TODO: table
+        stdfs::path watch_path;
+        // mutex
+        std::unordered_set<stdfs::path> completed;
+        // new file callback
+
     public:
-        // TODO: watch
+        void start(stdfs::path wpath);
 
-        ~Watcher() {
+        void stop();
 
-        }
+        bool change_directory();
+
+        bool loop();
 };
 
 #endif
