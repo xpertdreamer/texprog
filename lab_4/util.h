@@ -29,13 +29,14 @@
  * @param fmt printf-style format string.
  * @param ... Optional format arguments.
  */
-#define DEBUG(fmt, ...)                                             \
-do {                                                                \
-    if (DEBUG_MODE) {                                               \
-        std::cerr << DEBUG_COLOR << "DEBUG(" << __FILE__            \
-                  << ':' << __LINE__ << "):" << RESET_COLOR << " "; \
-        std::clog << std::format(fmt, ##__VA_ARGS__) << '\n';       \
-    }                                                               \
+#define DEBUG(fmt, ...)                                                 \
+    do {                                                                \
+    if (DEBUG_MODE) {                                                   \
+        std::cerr << DEBUG_COLOR << "DEBUG(" << __FILE__                \
+                  << ':' << __LINE__ << "):" << RESET_COLOR << " ";     \
+        std::clog <<                                                    \
+            std::format(fmt __VA_OPT__(,) ##__VA_ARGS__) << '\n';       \
+    }                                                                   \
 } while (0)
 
 /**
@@ -44,11 +45,11 @@ do {                                                                \
  * @param fmt printf-style format string.
  * @param ... Optional format arguments.
  */
-#define ERROR(fmt, ...)                                         \
-do {                                                            \
-    std::cerr << ERROR_COLOR << "ERROR(" << __FILE__            \
-              << ':' << __LINE__ << "):" << RESET_COLOR << " "; \
-    std::cerr << std::format(fmt, ##__VA_ARGS__) << '\n';       \
+#define ERROR(fmt, ...)                                                 \
+    do {                                                                \
+    std::cerr << ERROR_COLOR << "ERROR(" << __FILE__                    \
+              << ':' << __LINE__ << "):" << RESET_COLOR << " ";         \
+    std::cerr << std::format(fmt __VA_OPT__(,) ##__VA_ARGS__) << '\n'; \
 } while (0)
 
 /**
