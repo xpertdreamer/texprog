@@ -66,17 +66,37 @@ Watcher::stop()
     mutex.lock();
     cache.clear();
     watch_path.clear();
+    queue.drop();
     mutex.unlock();
 }
 
 bool
 Watcher::change_directory(const stdfs::path& npath)
 {
-    return false;
+    if (!stdfs::exists(npath) || !stdfs::is_directory(npath))
+        return false;
+    // TODO: change notifier
+
+    mutex.lock();
+    watch_path = npath;
+    mutex.unlock();
+
+    scan();
+
+    return true;
 }
 
 bool
 Watcher::loop()
 {
+    // TODO: main loop
     return false;
+}
+
+void
+Watcher::dump_queue()
+{
+    mutex.lock();
+    queue.peek();
+    mutex.unlock();
 }

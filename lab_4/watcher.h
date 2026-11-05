@@ -36,6 +36,8 @@ class Watcher {
         bool change_directory(const stdfs::path& npath);
 
         bool loop();
+
+        void dump_queue();
 };
 
 #endif
