@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <ostream>
 
+
 // TODO: check if this is correct
 enum class task_status {
     failed = -1,
@@ -11,6 +12,22 @@ enum class task_status {
     running = 1,
     completed = 2,
 };
+
+inline static const char*
+status_to_string(task_status ts)
+{
+#define CASE_STATUS(member) case task_status::member: return #member
+
+    switch(ts) {
+        CASE_STATUS(failed);
+        CASE_STATUS(waiting);
+        CASE_STATUS(running);
+        CASE_STATUS(completed);
+        default: return "unknown";
+    }
+
+#undef CASE_STATUS
+}
 
 struct Task {
     std::filesystem::path path;
@@ -24,7 +41,7 @@ struct Task {
     }
 
     inline friend std::ostream& operator<<(std::ostream& os, const Task& t) {
-        os << t.path;
+        os << "[Path=" << t.path << " Status=" << status_to_string(t.status) << "]";
         return os;
     }
 };
