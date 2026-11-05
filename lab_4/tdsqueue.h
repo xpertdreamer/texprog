@@ -30,7 +30,7 @@ private:
     Node<T>* head;
     std::mutex mutex; ///< Mutex to guard access
 public:
-    TdSQueue() = default;
+    TdSQueue() : size(0) {}
     ~TdSQueue() = default;
 
     /**

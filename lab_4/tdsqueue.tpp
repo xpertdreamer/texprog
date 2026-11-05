@@ -4,6 +4,7 @@ template<typename T>
 void
 TdSQueue<T>::push(T value)
 {
+    DEBUG("size = {}", size);
     mutex.lock();
     auto node = new Node<T>(value);
     if (size == 0) head = node;
@@ -20,6 +21,7 @@ template<typename T>
 T
 TdSQueue<T>::pop()
 {
+    DEBUG("size = {}", size);
     mutex.lock();
     if (size == 0) {
         ERROR("queue is empty. unable to pop");
@@ -61,6 +63,7 @@ template<typename T>
 void
 TdSQueue<T>::peek()
 {
+    DEBUG("size = {}", size);
     mutex.lock();
     if (size == 0) {
         ERROR("queue is empty");
@@ -99,6 +102,7 @@ template<typename T>
 void
 TdSQueue<T>::drop()
 {
+    DEBUG("size = {}", size);
     mutex.lock();
     if (size == 0) { mutex.unlock(); return; }
     for (auto curr = head; curr != nullptr;) {
