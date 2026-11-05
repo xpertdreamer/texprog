@@ -14,12 +14,12 @@ main(int argc, char** argv)
         ERROR("path is not providen\targc={}", argc);
         return EXIT_FAILURE;
     }
-    try {
+    // try {
         ui_handler uh('>', argv[1]);
         process(uh);
-    } catch(const std::runtime_error& e) {
-        ERROR("{}", e.what());
-        return EXIT_FAILURE;
-    }
+    // } catch(const std::runtime_error& e) {
+    //     ERROR("{}", e.what());
+    //     return EXIT_FAILURE;
+    // }
     return EXIT_SUCCESS;
 }

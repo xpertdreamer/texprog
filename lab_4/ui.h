@@ -52,7 +52,7 @@ struct ui_handler {
                 watcher.start(path);
 
             }},
-            {"DUMP", "dump queue state", [this](){watcher.dump_queue();}},
+            {"DUMP", "dump queue state", [this](){ watcher.dump_queue(); }},
         }};
     }
 
