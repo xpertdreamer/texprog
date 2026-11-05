@@ -2,6 +2,7 @@
 #define TASK_H
 
 #include <filesystem>
+#include <ostream>
 
 // TODO: check if this is correct
 enum class task_status {
@@ -20,6 +21,11 @@ struct Task {
     get_status()
     {
         return status;
+    }
+
+    inline friend std::ostream& operator<<(std::ostream& os, const Task& t) {
+        os << t.path;
+        return os;
     }
 };
 
