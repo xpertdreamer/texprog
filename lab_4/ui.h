@@ -2,6 +2,7 @@
 #define UI_H
 
 #include "tdsqueue.h"
+#include "watcher.h"
 
 #include <cctype>
 #include <csignal>
@@ -28,12 +29,15 @@ struct query {
 };
 
 struct ui_handler {
-    std::array<query, 7> qs;
+    std::array<query, 4> qs;
     char prompt;
     bool yes = true;
 
+    Watcher watcher;
+
     ui_handler(char p, char* path) {
         prompt = p;
+
         qs = {{
             {"HELP", "show help message", [this]() {
                 std::cout << "Help:\n";
@@ -41,10 +45,14 @@ struct ui_handler {
                     std::cout << qs[i].name << " - " << qs[i].description << std::endl;
                 }
             }},
-
             { "EXIT", "exit", [this]() {
                 yes = false;
             }},
+            {"START", "start watching loop", [this, path]() {
+                watcher.start(path);
+
+            }},
+            {"DUMP", "dump queue state", [this](){watcher.dump_queue();}},
         }};
     }
 

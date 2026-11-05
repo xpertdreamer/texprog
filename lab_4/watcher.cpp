@@ -89,7 +89,7 @@ Watcher::change_directory(const stdfs::path& npath)
 bool
 Watcher::loop()
 {
-    // TODO: main loop
+    // TODO: notifier
     return false;
 }
 
