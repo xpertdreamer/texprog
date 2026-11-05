@@ -37,7 +37,7 @@ class Watcher {
 
         bool loop();
 
-        void dump_queue();
+        TdSQueue<Task>& get_queue();
 };
 
 #endif

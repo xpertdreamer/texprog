@@ -93,10 +93,8 @@ Watcher::loop()
     return false;
 }
 
-void
-Watcher::dump_queue()
+TdSQueue<Task>&
+Watcher::get_queue()
 {
-    mutex.lock();
-    queue.peek();
-    mutex.unlock();
+    return queue;
 }

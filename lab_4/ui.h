@@ -29,7 +29,7 @@ struct query {
 };
 
 struct ui_handler {
-    std::array<query, 4> qs;
+    std::array<query, 5> qs;
     char prompt;
     bool yes = true;
 
@@ -52,7 +52,8 @@ struct ui_handler {
                 watcher.start(path);
 
             }},
-            {"DUMP", "dump queue state", [this](){ watcher.dump_queue(); }},
+            {"DUMP", "dump queue state", [this](){ watcher.get_queue().peek(); }},
+            {"DROP", "drop current queue", [this](){ watcher.get_queue().drop(); }},
         }};
     }
 
