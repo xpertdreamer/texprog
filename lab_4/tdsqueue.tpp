@@ -42,7 +42,7 @@ TdSQueue<T>::empty()
     mutex.lock();
     bool result = size == 0 ? true : false;
     mutex.unlock();
-    DEBUG("empty=%b", result);
+    DEBUG("empty={}", result);
     return result;
 }
 
@@ -53,7 +53,7 @@ TdSQueue<T>::get_size()
     mutex.lock();
     std::size_t result = size;
     mutex.unlock();
-    DEBUG("size=%ld", result);
+    DEBUG("size={}", result);
     return result;
 }
 

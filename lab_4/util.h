@@ -8,6 +8,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <ostream>
 #include <format>
 
 #include "conf.h"

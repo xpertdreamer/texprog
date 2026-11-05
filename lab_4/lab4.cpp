@@ -11,10 +11,15 @@ main(int argc, char** argv)
 {
     signal(SIGINT, &handler);
     if (argc < 2) {
-        ERROR("path is not providen");
+        ERROR("path is not providen\targc={}", argc);
         return EXIT_FAILURE;
     }
-    ui_handler uh('>', argv[1]);
-    process(uh);
-    return 0;
+    try {
+        ui_handler uh('>', argv[1]);
+        process(uh);
+    } catch(const std::runtime_error& e) {
+        ERROR("{}", e.what());
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
 }
