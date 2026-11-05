@@ -5,6 +5,7 @@
 #include "tdsqueue.h"
 #include <filesystem>
 #include <map>
+#include <mutex>
 #include <unordered_set>
 
 namespace stdfs = std::filesystem;
@@ -18,6 +19,7 @@ class Watcher {
 
         stdfs::path watch_path;
         // mutex
+        std::mutex mutex;
         // new file callback
 
         TdSQueue<Task> queue;
