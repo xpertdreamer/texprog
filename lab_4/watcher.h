@@ -6,9 +6,13 @@
 #include <filesystem>
 #include <map>
 #include <mutex>
+#include <thread>
 #include <unordered_set>
+#include <atomic>
 
 namespace stdfs = std::filesystem;
+
+constexpr unsigned short THREADS = 12;
 
 // TODO: results struct
 
@@ -16,6 +20,10 @@ namespace stdfs = std::filesystem;
 class Watcher {
     private:
         std::map<stdfs::path, task_status> cache;
+
+        std::atomic<bool> run = {false};
+
+        std::vector<std::thread> workers;
 
         stdfs::path watch_path;
         // mutex
@@ -38,6 +46,12 @@ class Watcher {
         bool loop();
 
         TdSQueue<Task>& get_queue();
+
+        std::map<stdfs::path, task_status>& get_cache();
+
+        void worker();
+
+        ~Watcher() {stop();}
 };
 
 #endif

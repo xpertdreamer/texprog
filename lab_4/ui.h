@@ -47,12 +47,21 @@ struct ui_handler {
             }},
             { "EXIT", "exit", [this]() {
                 yes = false;
+                // TODO: stop watching
             }},
             {"START", "start watching loop", [this, path]() {
                 watcher.start(path);
-
+                // TODO: start loop
             }},
-            {"DUMP", "dump queue state", [this](){ watcher.get_queue().peek(); }},
+            {"DUMP", "dump queue state", [this](){
+                std::cout << "Cache:" << '\n';
+                auto cache = watcher.get_cache();
+                for (const auto& [k, v] : cache) {
+                    std::cout << k << " : " <<  status_to_string(v);
+                }
+                std::cout << '\n' << "Queue:" << '\n';
+                watcher.get_queue().peek();
+            }},
             {"DROP", "drop current queue", [this](){ watcher.get_queue().drop(); }},
             {"CHANGE", "change directory being watched", [this](){
                 std::cout << "Enter relative path to new directory";

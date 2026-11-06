@@ -13,7 +13,7 @@ enum class task_status {
     completed = 2,
 };
 
-inline static const char*
+inline const char*
 status_to_string(task_status ts)
 {
 #define CASE_STATUS(member) case task_status::member: return #member

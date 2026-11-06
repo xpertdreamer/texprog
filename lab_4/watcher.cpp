@@ -1,8 +1,12 @@
 #include "watcher.h"
 #include "task.h"
 #include "util.h"
+#include "../lab_2/pipe.h"
 
 #include <filesystem>
+#include <thread>
+
+
 
 void
 Watcher::scan()
@@ -51,11 +55,19 @@ Watcher::file_handler(const stdfs::path& path)
 void
 Watcher::start(const stdfs::path& wpath)
 {
-    stop();
+    if (run) stop();
     mutex.lock();
+
+    run = true;
     watch_path = wpath;
+
     mutex.unlock();
     scan();
+
+    workers.reserve(THREADS);
+    for (size_t i = 0; i < THREADS; ++i) {
+        workers.emplace_back([this](){worker();});
+    }
     // TODO: notifier
 }
 
@@ -63,6 +75,13 @@ void
 Watcher::stop()
 {
     // TODO: end notifier
+    run = false;
+
+    for (auto& t : workers) {
+        t.detach();
+    }
+    workers.clear();
+
     mutex.lock();
     cache.clear();
     watch_path.clear();
@@ -97,4 +116,48 @@ TdSQueue<Task>&
 Watcher::get_queue()
 {
     return queue;
+}
+
+std::map<stdfs::path, task_status>&
+Watcher::get_cache()
+{
+    return cache;
+}
+
+void
+Watcher::worker()
+{
+    while (run) {
+        Task task;
+        bool do_process = false;
+
+        mutex.lock();
+        if (!queue.empty()) {
+            task = queue.pop();
+
+            auto it = cache.find(task.path);
+            if (it != cache.end() && it->second == task_status::waiting) {
+                it->second = task_status::running;
+                do_process = true;
+            }
+        }
+        mutex.unlock();
+
+        if (do_process) {
+            auto result = process(task.path);
+
+            mutex.lock();
+            auto it = cache.find(task.path);
+            if (it != cache.end()) {
+                it->second = (result.second == (int)task_status::failed)
+                           ? task_status::failed
+                           : task_status::completed;
+            }
+            mutex.unlock();
+        }
+
+        if (!do_process) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+    }
 }
