@@ -86,10 +86,13 @@ lab4: lab_4/lab4.cpp lab_4/watcher.cpp
 		-c lab_2/parser.cpp -o build/lab_4/obj/parser.o
 	g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
 		-c lab_2/uploader.cpp -o build/lab_4/obj/uploader.o
+	g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+		-c lab_2/pipe.cpp -o build/lab_4/obj/pipe.o
 
 	ar rvs build/lab_4/liblab2.a \
 		build/lab_4/obj/parser.o \
-		build/lab_4/obj/uploader.o
+		build/lab_4/obj/uploader.o \
+		build/lab_4/obj/pipe.o
 
 	g++ -Wall -Wextra -Ilab_2 -Ilab_4 -g -DDEBUG_MODE=$(DEBUG) \
 		$^ -o build/lab_4/lab4 \
