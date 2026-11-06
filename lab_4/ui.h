@@ -1,6 +1,7 @@
 #ifndef UI_H
 #define UI_H
 
+#include "task.h"
 #include "tdsqueue.h"
 #include "watcher.h"
 
@@ -29,7 +30,7 @@ struct query {
 };
 
 struct ui_handler {
-    std::array<query, 6> qs;
+    std::array<query, 7> qs;
     char prompt;
     bool yes = true;
 
@@ -48,17 +49,17 @@ struct ui_handler {
             { "EXIT", "exit", [this]() {
                 yes = false;
                 watcher.stop();
-                // TODO: stop watching
             }},
             {"START", "start watching loop", [this, path]() {
                 watcher.start(path);
-                // TODO: start loop
             }},
             {"DUMP", "dump queue state", [this](){
                 std::cout << "Cache:" << '\n';
                 auto cache = watcher.get_cache();
                 for (const auto& [k, v] : cache) {
-                    std::cout << k << " : " <<  status_to_string(v);
+                    if (v != task_status::waiting) {
+                        std::cout << k << " : " << status_to_string(v) << '\n';
+                    }
                 }
                 std::cout << '\n' << "Queue:" << '\n';
                 watcher.get_queue().peek();
@@ -70,11 +71,15 @@ struct ui_handler {
                 std::cin >> input;
                 watcher.change_directory(input);
             }},
+            {"STOP", "stop all workers", [this](){
+                watcher.stop();
+            }},
         }};
     }
 
     ~ui_handler() {
         // TODO
+        watcher.stop();
     }
 
     inline void

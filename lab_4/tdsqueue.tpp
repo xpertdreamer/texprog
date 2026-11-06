@@ -72,7 +72,7 @@ TdSQueue<T>::peek()
     }
 
     for (auto curr = head; curr != nullptr; curr = curr->next) {
-        std::cout << curr->data << " ";
+        std::cout << curr->data << "\n";
     }
     std::cout << std::endl;
     mutex.unlock();

@@ -3,8 +3,10 @@
 
 #include "task.h"
 #include "tdsqueue.h"
+
 #include <filesystem>
 #include <map>
+#include <memory>
 #include <mutex>
 #include <thread>
 #include <unordered_set>
@@ -12,13 +14,12 @@
 
 namespace stdfs = std::filesystem;
 
-constexpr unsigned short THREADS = 12;
-
-// TODO: results struct
-
+constexpr unsigned short THREADS = 2;
 
 class Watcher {
     private:
+        std::unique_ptr<std::thread> loop_thread;
+
         std::map<stdfs::path, task_status> cache;
 
         std::atomic<bool> run = {false};
@@ -43,7 +44,7 @@ class Watcher {
 
         bool change_directory(const stdfs::path& npath);
 
-        bool loop();
+        void loop();
 
         TdSQueue<Task>& get_queue();
 

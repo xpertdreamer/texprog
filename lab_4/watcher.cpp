@@ -3,10 +3,10 @@
 #include "util.h"
 #include "../lab_2/pipe.h"
 
+#include <cstring>
 #include <filesystem>
+#include <memory>
 #include <thread>
-
-
 
 void
 Watcher::scan()
@@ -43,7 +43,8 @@ Watcher::file_handler(const stdfs::path& path)
         Task t{path, task_status::waiting};
         queue.push(t);
         DEBUG("new file queued {}", path.relative_path().string());
-    } else if (iterator->second == task_status::completed || iterator->second == task_status::failed) {
+    } else if (// iterator->second == task_status::completed ||
+               iterator->second == task_status::failed) {
         iterator->second = task_status::waiting;
         Task t{path, task_status::waiting};
         queue.push(t);
@@ -56,26 +57,33 @@ void
 Watcher::start(const stdfs::path& wpath)
 {
     if (run) stop();
-    mutex.lock();
 
+    mutex.lock();
     run = true;
     watch_path = wpath;
-
     mutex.unlock();
-    scan();
 
+    workers.clear();
     workers.reserve(THREADS);
     for (size_t i = 0; i < THREADS; ++i) {
         workers.emplace_back([this](){worker();});
     }
     // TODO: notifier
+
+    loop_thread = std::make_unique<std::thread>(&Watcher::loop, this);
 }
 
 void
 Watcher::stop()
 {
     // TODO: end notifier
+    if (!run) return;
     run = false;
+
+    if (loop_thread) {
+        loop_thread->detach();
+        loop_thread.reset();
+    }
 
     for (auto& t : workers) {
         t.detach();
@@ -105,11 +113,15 @@ Watcher::change_directory(const stdfs::path& npath)
     return true;
 }
 
-bool
+// NOTE: this is just a placeholder for now
+void
 Watcher::loop()
 {
+    while (run) {
+        scan();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
     // TODO: notifier
-    return false;
 }
 
 TdSQueue<Task>&
