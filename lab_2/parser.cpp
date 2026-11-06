@@ -5,6 +5,7 @@
 #include <regex>
 #include <string>
 
+
 static const std::regex doc_header(DOC_HEADER_SIGNS, std::regex::ECMAScript | std::regex::multiline);
 static const std::regex doc_list(DOC_LIST_SIGNS, std::regex::ECMAScript | std::regex::multiline);
 static const std::regex doc_para(DOC_PARAGRAPH_SIGNS, std::regex::ECMAScript);
@@ -106,7 +107,6 @@ Parser::is_asciidoc(const std::string& text)
 std::vector<Element>
 Parser::find(const std::string& text, Type type, std::size_t start_line)
 {
-    START(find);
     DEBUG("Call find");
     std::vector<Element> result;
     const std::regex* rx = nullptr;
@@ -158,6 +158,5 @@ Parser::find(const std::string& text, Type type, std::size_t start_line)
         }
         result.push_back(std::move(element));
     }
-    END(find);
     return result;
 }
