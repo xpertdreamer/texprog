@@ -29,7 +29,7 @@ struct query {
 };
 
 struct ui_handler {
-    std::array<query, 5> qs;
+    std::array<query, 6> qs;
     char prompt;
     bool yes = true;
 
@@ -54,6 +54,12 @@ struct ui_handler {
             }},
             {"DUMP", "dump queue state", [this](){ watcher.get_queue().peek(); }},
             {"DROP", "drop current queue", [this](){ watcher.get_queue().drop(); }},
+            {"CHANGE", "change directory being watched", [this](){
+                std::cout << "Enter relative path to new directory";
+                std::string input;
+                std::cin >> input;
+                watcher.change_directory(input);
+            }},
         }};
     }
 
