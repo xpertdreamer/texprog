@@ -47,6 +47,7 @@ struct ui_handler {
             }},
             { "EXIT", "exit", [this]() {
                 yes = false;
+                watcher.stop();
                 // TODO: stop watching
             }},
             {"START", "start watching loop", [this, path]() {
