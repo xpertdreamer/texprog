@@ -3,6 +3,7 @@
 
 #include "task.h"
 #include "tdsqueue.h"
+#include "parser.h"
 
 #include <filesystem>
 #include <map>
@@ -20,7 +21,7 @@ class Watcher {
     private:
         std::unique_ptr<std::thread> loop_thread;
 
-        std::map<stdfs::path, task_status> cache;
+        std::map<stdfs::path, std::pair<std::vector<Element>, task_status>> cache;
 
         std::atomic<bool> run = {false};
 
@@ -48,7 +49,7 @@ class Watcher {
 
         TdSQueue<Task>& get_queue();
 
-        std::map<stdfs::path, task_status>& get_cache();
+        std::map<stdfs::path, std::pair<std::vector<Element>, task_status>>& get_cache();
 
         void worker();
 

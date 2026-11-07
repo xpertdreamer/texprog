@@ -39,13 +39,13 @@ Watcher::file_handler(const stdfs::path& path)
 
     auto iterator = cache.find(path);
     if (iterator == cache.end()) {
-        cache[path] = task_status::waiting;
+        cache[path].second = task_status::waiting;
         Task t{path, task_status::waiting};
         queue.push(t);
         DEBUG("new file queued {}", path.relative_path().string());
     } else if (// iterator->second == task_status::completed ||
-               iterator->second == task_status::failed) {
-        iterator->second = task_status::waiting;
+               iterator->second.second == task_status::failed) {
+        iterator->second.second = task_status::waiting;
         Task t{path, task_status::waiting};
         queue.push(t);
         DEBUG("file reuploaded {}", path.relative_path().string());
@@ -130,7 +130,7 @@ Watcher::get_queue()
     return queue;
 }
 
-std::map<stdfs::path, task_status>&
+std::map<stdfs::path, std::pair<std::vector<Element>, task_status>>&
 Watcher::get_cache()
 {
     return cache;
@@ -148,8 +148,8 @@ Watcher::worker()
             task = queue.pop();
 
             auto it = cache.find(task.path);
-            if (it != cache.end() && it->second == task_status::waiting) {
-                it->second = task_status::running;
+            if (it != cache.end() && it->second.second == task_status::waiting) {
+                it->second.second = task_status::running;
                 do_process = true;
             }
         }
@@ -161,9 +161,10 @@ Watcher::worker()
             mutex.lock();
             auto it = cache.find(task.path);
             if (it != cache.end()) {
-                it->second = (result.second == (int)task_status::failed)
+                it->second.second = (result.second == (int)task_status::failed)
                            ? task_status::failed
                            : task_status::completed;
+                it->second.first = result.first;
             }
             mutex.unlock();
         }

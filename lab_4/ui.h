@@ -57,8 +57,9 @@ struct ui_handler {
                 std::cout << "Cache:" << '\n';
                 auto cache = watcher.get_cache();
                 for (const auto& [k, v] : cache) {
-                    if (v != task_status::waiting) {
-                        std::cout << k << " : " << status_to_string(v) << '\n';
+                    const auto& [e, s] = v;
+                    if (s != task_status::waiting) {
+                        std::cout << k << " : " << status_to_string(s) << '\n';
                     }
                 }
                 std::cout << '\n' << "Queue:" << '\n';
