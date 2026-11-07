@@ -4,6 +4,7 @@
 #include "task.h"
 #include "tdsqueue.h"
 #include "watcher.h"
+#include "parser.h"
 
 #include <cctype>
 #include <csignal>
@@ -30,14 +31,16 @@ struct query {
 };
 
 struct ui_handler {
-    std::array<query, 7> qs;
+    std::array<query, 8> qs;
     char prompt;
     bool yes = true;
+    std::string path;
 
     Watcher watcher;
 
-    ui_handler(char p, char* path) {
+    ui_handler(char p, char* pt) {
         prompt = p;
+        path.assign(pt);
 
         qs = {{
             {"HELP", "show help message", [this]() {
@@ -46,41 +49,14 @@ struct ui_handler {
                     std::cout << qs[i].name << " - " << qs[i].description << std::endl;
                 }
             }},
-            { "EXIT", "exit", [this]() {
-                yes = false;
-                watcher.stop();
-            }},
-            {"START", "start watching loop", [this, path]() {
-                watcher.start(path);
-            }},
-            {"DUMP", "dump queue state", [this](){
-                std::cout << "Cache:" << '\n';
-                auto cache = watcher.get_cache();
-                for (const auto& [k, v] : cache) {
-                    const auto& [e, s] = v;
-                    if (s != task_status::waiting) {
-                        std::cout << k << " : " << status_to_string(s) << '\n';
-                    }
-                }
-                std::cout << '\n' << "Queue:" << '\n';
-                watcher.get_queue().peek();
-            }},
-            {"DROP", "drop current queue", [this](){ watcher.get_queue().drop(); }},
-            {"CHANGE", "change directory being watched", [this](){
-                std::cout << "Enter relative path to new directory";
-                std::string input;
-                std::cin >> input;
-                watcher.change_directory(input);
-            }},
-            {"STOP", "stop all workers", [this](){
-                watcher.stop();
-            }},
+            { "EXIT", "exit", [this]() {}},
+            {"START", "start watching loop", [this]() {}},
+            {"DUMP", "dump queue state", [this](){}},
+            {"DROP", "drop current queue", [this](){}},
+            {"CHANGE", "change directory being watched",{}},
+            {"STOP", "stop all workers", [this](){}},
+            {"SHOW", "show result of file processing", [this](){}},
         }};
-    }
-
-    ~ui_handler() {
-        // TODO
-        watcher.stop();
     }
 
     inline void

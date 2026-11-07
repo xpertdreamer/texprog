@@ -32,28 +32,9 @@ class Watcher {
         std::mutex mutex;
         // new file callback
 
-        TdSQueue<Task> queue;
-
-        void scan();
-
-        void file_handler(const stdfs::path& path);
-
     public:
-        void start(const stdfs::path& wpath);
 
-        void stop();
-
-        bool change_directory(const stdfs::path& npath);
-
-        void loop();
-
-        TdSQueue<Task>& get_queue();
-
-        std::map<stdfs::path, std::pair<std::vector<Element>, task_status>>& get_cache();
-
-        void worker();
-
-        ~Watcher() {stop();}
+        ~Watcher() { stop(); }
 };
 
 #endif

@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <ios>
 
-std::pair<const std::vector<Element>&, int>
+std::pair<const std::vector<Element>, int>
 process(stdfs::path path)
 {
     Uploader up(path, BATCH);
