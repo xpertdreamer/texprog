@@ -3,27 +3,52 @@
 #include "uploader.h"
 #include <algorithm>
 #include <ios>
+#include <iterator>
+#include <optional>
 
-std::pair<const std::vector<Element>, int>
-process(stdfs::path path)
+typedef struct Batch {
+    std::string text;
+    std::size_t lines = 0;
+} batch;
+
+std::optional<Batch> // rust style error handling is pretty good
+read_batch(Uploader& u)
+{
+    std::streamsize read = u.upload_batch();
+    if (read <= 0) return std::nullopt;
+
+    Batch b;
+    b.text.assign(u.get_buf().data(), (std::size_t)read);
+    b.lines = (std::size_t)(std::count(b.text.begin(), b.text.end(), '\n'));
+    return b;
+}
+
+static std::vector<Element>
+parse_batch(const batch& b, std::size_t offset)
+{
+    return Parser::find(b.text, Type::Header, offset);
+}
+
+std::pair<std::vector<Element>, int>
+process(const stdfs::path& path, const std::atomic<bool>& run)
 {
     Uploader up(path, BATCH);
     std::vector<Element> res;
     std::size_t line_ofs = 1;
 
-    while(true) {
-        std::streamsize read = up.upload_batch();
-        if (read <= 0) break;
-        std::string text(up.get_buf().data(), read);
-        std::vector temp = Parser::find(text, Type::Header, line_ofs);
-        res.insert(res.end(), temp.begin(), temp.end());
-        line_ofs += static_cast<std::size_t>(std::count(text.begin(), text.end(), '\n'));
+    while(run) {
+        auto b = read_batch(up);
+        if (!b) break;
+
+        auto parsed = parse_batch(*b, line_ofs);
+        res.insert(res.end(), std::make_move_iterator(parsed.begin()), std::make_move_iterator(parsed.end()));
+        line_ofs += b->lines;
     }
 
+    if (!run) return {{}, 0};
     if (up.stream_bad()) {
         ERROR("io error while reading");
         return {{},-1};
     }
-
-    return {res, 2};
+    return {std::move(res), 2};
 }
