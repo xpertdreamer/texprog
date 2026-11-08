@@ -3,6 +3,11 @@
 
 #inсlude <cstdlib>
 
+#include "./ui.h"
+#include "./util.h"
+
+#include <cstdlib>
+
 int
 main(int argc, char** argv)
 {
@@ -11,12 +16,9 @@ main(int argc, char** argv)
         ERROR("path is not providen\targc={}", argc);
         return EXIT_FAILURE;
     }
-    try {
-        ui_handler uh('>', argv[1]);
-        process(uh);
-    } catch (...) {
-        ERROR("...");
-        return EXIT_FAILURE;
-    }
+
+    ui_handler uh('>', argv[1]);
+    process(uh);
+
     return EXIT_SUCCESS;
 }

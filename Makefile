@@ -111,8 +111,8 @@ lab5: lab_5/lab5.cpp
 		-c lab_2/uploader.cpp -o build/lab_5/obj/uploader.o
 	g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
 		-c lab_2/pipe.cpp -o build/lab_5/obj/pipe.o
-	g++	-Wall -Wextra -Ilab_4 -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
-		-c lab_4/watcher.cpp -o build/lab_5/obj/watcher.o
+	g++	-Wall -Wextra -Ilab_5/impl -Ilab_2 -Ilab_5 -Ilab_4 -DDEBUG_MODE=$(DEBUG) \
+		-c lab_5/impl/watcher.cpp -o build/lab_5/obj/watcher.o
 
 	ar rvs build/lab_5/liblabs.a \
 		build/lab_5/obj/parser.o \
@@ -120,7 +120,7 @@ lab5: lab_5/lab5.cpp
 		build/lab_5/obj/pipe.o \
 		build/lab_5/obj/watcher.o
 
-	g++ -Wall -Wextra -Ilab_2 -Ilab_4 -Ilab_5 -g -DDEBUG_MODE=$(DEBUG) \
+	g++ -Wall -Wextra -Ilab_5 -Ilab_4 -Ilab_2 -g -DDEBUG_MODE=$(DEBUG) \
 		$^ \
 		-Lbuild/lab_5 -l:liblabs.a \
 		-o build/lab_5/lab5

@@ -3,6 +3,7 @@
 
 #include "task.h"
 #include "tdsqueue.h"
+#include "./util.h"
 #include "watcher.h"
 #include "parser.h"
 
@@ -17,6 +18,7 @@
 #include <functional>
 #include <algorithm>
 #include <thread>
+#include <mutex>
 
 volatile inline sig_atomic_t stop = 0;
 
@@ -36,6 +38,7 @@ struct ui_handler {
     char prompt;
     bool yes = true;
     std::string path;
+
 
     Watcher watcher;
 
@@ -121,7 +124,10 @@ struct ui_handler {
 inline void
 process(ui_handler& handler) {
     while (handler.yes && !stop) {
-        std::cout << handler.prompt << ' ';
+        {
+            std::lock_guard l(print_mutex);
+            std::cout << handler.prompt << ' ' << std::flush;
+        }
         std::string input;
         if (!(std::cin >> input)) {
             handler.yes = false;
@@ -138,7 +144,6 @@ process(ui_handler& handler) {
         }
         if (!found) ERROR("not found");
     }
-
 }
 
 #endif
