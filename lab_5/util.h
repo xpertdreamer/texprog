@@ -48,9 +48,10 @@
  */
 #define ERROR(fmt, ...)                                                 \
     do {                                                                \
-    std::cerr << ERROR_COLOR << "ERROR(" << __FILE__                    \
+    std::cout << ERROR_COLOR << "ERROR(" << __FILE__                    \
               << ':' << __LINE__ << "):" << RESET_COLOR << " ";         \
-    std::cerr << std::format(fmt __VA_OPT__(,) ##__VA_ARGS__) << '\n'; \
+    std::cout << std::format(fmt __VA_OPT__(,) ##__VA_ARGS__) << '\n';  \
+    std::cout << std::endl;                                             \
 } while (0)
 
 /**

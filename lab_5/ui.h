@@ -3,7 +3,7 @@
 
 #include "task.h"
 #include "tdsqueue.h"
-#include "./util.h"
+#include "util.h"
 #include "watcher.h"
 #include "parser.h"
 
@@ -124,10 +124,7 @@ struct ui_handler {
 inline void
 process(ui_handler& handler) {
     while (handler.yes && !stop) {
-        {
-            std::lock_guard l(print_mutex);
-            std::cout << handler.prompt << ' ' << std::flush;
-        }
+        std::cout << handler.prompt << ' ' << std::flush;
         std::string input;
         if (!(std::cin >> input)) {
             handler.yes = false;

@@ -1,3 +1,4 @@
+#include "../util.h"
 #include "watcher.h"
 #include "pipe.h"
 #include "../exceptions.h"
@@ -67,7 +68,7 @@ Watcher::loop()
         try {
             scan();
         } catch (const SizeException& se) {
-            ERROR("{}", se.what());
+            ERROR("{}. Press Enter to continue...", se.what());
         }
 
         for (int i = 0; i < 10 && run; ++i)
