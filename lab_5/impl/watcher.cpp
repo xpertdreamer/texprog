@@ -26,7 +26,14 @@ Watcher::scan()
     }
 
     for (const auto& e : stdfs::directory_iterator(path)) {
-        if (e.is_regular_file()) handle_file(e.path());
+        // TODO: other exceptions
+        if (e.is_regular_file()) {
+            try {
+                handle_file(e.path());
+            } catch (const SizeException& sz) {
+                ERROR("{}", sz.what());
+            }
+        }
     }
 }
 
@@ -46,7 +53,7 @@ Watcher::handle_file(const stdfs::path& fpath) noexcept(false)
 
     auto it = cache.find(fpath);
 
-    if (it != cache.end() && !(it->second.second == task_status::cancelled)) return;
+    if (it != cache.end() && it->second.second == task_status::cancelled) return;
 
     if (e.file_size() > MAX_FILE_SIZE) {
         cache[fpath].second = task_status::cancelled;
@@ -67,11 +74,7 @@ void
 Watcher::loop()
 {
     while (run) {
-        try {
-            scan();
-        } catch (const SizeException& se) {
-            ERROR("{}. Press Enter to continue...", se.what());
-        }
+        scan();
 
         for (int i = 0; i < 10 && run; ++i)
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
