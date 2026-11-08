@@ -11,6 +11,7 @@ enum class task_status {
     waiting = 0,
     running = 1,
     completed = 2,
+    cancelled,
 };
 
 inline const char*
@@ -23,6 +24,7 @@ status_to_string(task_status ts)
         CASE_STATUS(waiting);
         CASE_STATUS(running);
         CASE_STATUS(completed);
+        CASE_STATUS(cancelled);
         default: return "unknown";
     }
 
