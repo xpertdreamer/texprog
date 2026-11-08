@@ -19,22 +19,36 @@ constexpr unsigned short THREADS = 2;
 
 class Watcher {
     private:
-        std::unique_ptr<std::thread> loop_thread;
-
-        std::map<stdfs::path, std::pair<std::vector<Element>, task_status>> cache;
-
         std::atomic<bool> run = {false};
-
-        std::vector<std::thread> workers;
+        std::mutex mutex;
 
         stdfs::path watch_path;
-        // mutex
-        std::mutex mutex;
-        // new file callback
+        std::map<stdfs::path, std::pair<std::vector<Element>, task_status>> cache;
+        TdSQueue<Task> queue;
+
+        std::unique_ptr<std::thread> loop_thread;
+        std::vector<std::thread> workers;
+
+        void scan();
+
+        void handle_file(const stdfs::path& fpath);
+
+        void loop();
+
+        void worker();
 
     public:
+        void start(const stdfs::path& wpath);
 
-        ~Watcher() { stop(); }
+        void stop();
+
+        bool change_directory(const stdfs::path& npath);
+
+        void dump_state();
+
+        std::vector<Element> get_res(const stdfs::path& rpath);
+
+        void drop_queue();
 };
 
 #endif
