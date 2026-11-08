@@ -46,7 +46,9 @@ Watcher::handle_file(const stdfs::path& fpath) noexcept(false)
 
     auto it = cache.find(fpath);
 
-    if (e.file_size() > MAX_FILE_SIZE && !(it->second.second == task_status::cancelled)) {
+    if (it != cache.end() && !(it->second.second == task_status::cancelled)) return;
+
+    if (e.file_size() > MAX_FILE_SIZE) {
         cache[fpath].second = task_status::cancelled;
         throw SizeException();
     }
