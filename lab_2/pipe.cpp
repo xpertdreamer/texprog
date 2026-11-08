@@ -40,7 +40,9 @@ process(const stdfs::path& path, const std::atomic<bool>& run)
         auto b = read_batch(up);
         if (!b) break;
 
+        DEBUG("start parsing");
         auto parsed = parse_batch(*b, line_ofs);
+        DEBUG("parsed");
         res.insert(res.end(), std::make_move_iterator(parsed.begin()), std::make_move_iterator(parsed.end()));
         line_ofs += b->lines;
     }

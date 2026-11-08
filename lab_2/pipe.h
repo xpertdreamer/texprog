@@ -10,7 +10,7 @@
 
 namespace stdfs = std::filesystem;
 
-constexpr std::size_t BATCH = 512 * 1024 * 1024;
+constexpr std::size_t BATCH = 256 * 1024 * 1024;
 
 // elems + code
 std::pair<std::vector<Element>, int>

@@ -1,4 +1,6 @@
 #include "watcher.h"
+#include "pipe.h"
+
 #include "task.h"
 #include <filesystem>
 #include <thread>
@@ -8,10 +10,10 @@ void
 Watcher::scan()
 {
     stdfs::path path;
-    mutex.lock();
+    {
         std::lock_guard l(mutex);
-        path = path;
-    mutex.unlock();
+        path = watch_path;
+    }
 
     if (!stdfs::exists(path) || !stdfs::is_directory(path)) {
         ERROR("cannot scan current directory");
@@ -51,7 +53,7 @@ Watcher::loop()
 {
     while (run) {
         scan();
-        for (int i = 0; i < 100 && run; ++i)
+        for (int i = 0; i < 10 && run; ++i)
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
@@ -59,14 +61,91 @@ Watcher::loop()
 void
 Watcher::worker()
 {
+    while (run) {
+        Task task;
+        bool taken = false;
+        {
+            std::lock_guard l(mutex);
+            if (!queue.empty()) {
+                task = queue.pop();
+                auto it = cache.find(task.path);
+                if (it != cache.end() && it->second.second == task_status::waiting) {
+                    it->second.second = task_status::running;
+                    taken = true;
+                }
+            }
+        }
 
+        if (!taken) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            continue;
+        }
+
+        auto [element, status] = process(task.path, run);
+        if (!run) return;
+
+        std::lock_guard l(mutex);
+        auto it = cache.find(task.path);
+        if (it != cache.end()) {
+            it->second.second = (status == -1) ? task_status::failed
+                : task_status::completed;
+            it->second.first = std::move(element);
+        }
+    }
 }
 
-void start(const stdfs::path& wpath);
+void
+Watcher::start(const stdfs::path& wpath)
+{
+    stop();
 
-void stop();
+    mutex.lock();
+    watch_path = wpath;
+    mutex.unlock();
 
-bool change_directory(const stdfs::path& npath);
+    run = true;
+    workers.reserve(THREADS);
+    for (std::size_t i = 0; i < THREADS; ++i) {
+        workers.emplace_back([this](){worker();});
+    }
+    loop_thread = std::make_unique<std::thread>(&Watcher::loop, this);
+}
+
+void
+Watcher::stop()
+{
+    if (!run.exchange(false)) return;
+
+    if (loop_thread && loop_thread->joinable()) loop_thread->join();
+    loop_thread.reset();
+
+    for (auto& w : workers) {
+        if (w.joinable()) w.join();
+    }
+    workers.clear();
+
+    std::lock_guard l(mutex);
+    cache.clear();
+    watch_path.clear();
+    queue.drop();
+}
+
+bool
+Watcher::change_directory(const stdfs::path& npath)
+{
+    if (!stdfs::exists(npath) || !stdfs::is_directory(npath))
+        return false;
+
+    {
+        std::lock_guard l(mutex);
+        watch_path = npath;
+        cache.clear();
+        queue.drop();
+    }
+
+    scan();
+    return true;
+}
 
 void
 Watcher::dump_state()

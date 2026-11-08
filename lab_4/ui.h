@@ -49,15 +49,40 @@ struct ui_handler {
                     std::cout << qs[i].name << " - " << qs[i].description << std::endl;
                 }
             }},
-            { "EXIT", "exit", [this]() {}},
-            {"START", "start watching loop", [this]() {}},
-            {"DUMP", "dump queue state", [this](){}},
-            {"DROP", "drop current queue", [this](){}},
-            {"CHANGE", "change directory being watched",{}},
-            {"STOP", "stop all workers", [this](){}},
-            {"SHOW", "show result of file processing", [this](){}},
+            {"EXIT", "exit", [this]() {yes = false;}},
+            {"START", "start watching loop", [this]() {watcher.start(path);}},
+            {"DUMP", "dump current state", [this](){watcher.dump_state();}},
+            {"DROP", "drop current queue", [this](){watcher.drop_queue();}},
+            {"CHANGE", "change directory being watched", [this](){
+                std::cout << "Enter relative path to new directory: ";
+                std::string input;
+                if (!(std::cin >> input)) return;
+                if (watcher.change_directory(input)) path.assign(input);
+            }},
+            {"STOP", "stop all workers", [this](){watcher.stop();}},
+            {"SHOW", "show result of file processing", [this](){
+                std::cout << "Enter file path: ";
+                std::string input;
+                if (!(std::cin >> input)) return;
+                auto v = watcher.get_res(input);
+                if (v.empty()) {
+                    ERROR("no elements found or doesn't exists");
+                    return;
+                }
+                std::cout << "Found:" << '\n';
+                for (const auto& e : v) {
+                    std::cout << std::left << std::setw(100) << e.text
+                              << std::setw(10) << "\t" << "line=" << e.line;
+                    if (e.type == Type::Header)
+                        std::cout << std::right << std::setw(10)
+                                  << "\tlevel=" << static_cast<int>(e.level);
+                    std::cout << '\n';
+                }
+            }},
         }};
     }
+
+    ~ui_handler() {watcher.stop();}
 
     inline void
     execute(size_t index) {
@@ -72,14 +97,20 @@ process(ui_handler& handler) {
     while (handler.yes && !stop) {
         std::cout << handler.prompt << ' ';
         std::string input;
-        std::cin >> input;
+        if (!(std::cin >> input)) {
+            handler.yes = false;
+            break;
+        }
         std::transform(input.begin(), input.end(), input.begin(), ::toupper);
+        bool found = false;
         for (auto &q : handler.qs) {
             if (q.name == input) {
                 q.handler();
+                found = true;
                 break;
             }
         }
+        if (!found) ERROR("not found");
     }
 
 }

@@ -42,6 +42,8 @@ class Watcher {
 
         void stop();
 
+        void exit();
+
         bool change_directory(const stdfs::path& npath);
 
         void dump_state();
