@@ -30,13 +30,13 @@ parse_batch(const batch& b, std::size_t offset)
 }
 
 std::pair<std::vector<Element>, int>
-process(const stdfs::path& path, const std::atomic<bool>& run)
+process(const stdfs::path& path, const std::atomic<bool>& run, const std::atomic<bool>& cancel)
 {
     Uploader up(path, BATCH);
     std::vector<Element> res;
     std::size_t line_ofs = 1;
 
-    while(run) {
+    while(run && !cancel) {
         auto b = read_batch(up);
         if (!b) break;
 
@@ -47,6 +47,7 @@ process(const stdfs::path& path, const std::atomic<bool>& run)
         line_ofs += b->lines;
     }
 
+    if (cancel) return {{}, 3};
     if (!run) return {{}, 0};
     if (up.stream_bad()) {
         ERROR("io error while reading");

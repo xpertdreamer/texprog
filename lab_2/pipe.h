@@ -14,6 +14,6 @@ constexpr std::size_t BATCH = 256 * 1024 * 1024;
 
 // elems + code
 std::pair<std::vector<Element>, int>
-process(const stdfs::path& path, const std::atomic<bool>& run);
+process(const stdfs::path& path, const std::atomic<bool>& run, const std::atomic<bool>& cancel);
 
 #endif
