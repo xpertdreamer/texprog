@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <filesystem>
 #include <memory>
+#include <optional>
 #include <string>
 #include <iostream>
 #include <functional>
@@ -31,7 +32,7 @@ struct query {
 };
 
 struct ui_handler {
-    std::array<query, 8> qs;
+    std::array<query, 11> qs;
     char prompt;
     bool yes = true;
     std::string path;
@@ -50,33 +51,47 @@ struct ui_handler {
                 }
             }},
             {"EXIT", "exit", [this]() {yes = false;}},
-            {"START", "start watching loop", [this]() {watcher.start(path);}},
+            {"START", "start watching loop", [this]() {watcher.start(path, Mode::threads);}},
             {"DUMP", "dump current state", [this](){watcher.dump_state();}},
             {"DROP", "drop current queue", [this](){watcher.drop_queue();}},
             {"CHANGE", "change directory being watched", [this](){
-                std::cout << "Enter relative path to new directory: ";
-                std::string input;
-                if (!(std::cin >> input)) return;
-                if (watcher.change_directory(input)) path.assign(input);
+                if (auto input = get_input("Enter relative path to new directory: ")) {
+                    if (watcher.change_directory(*input)) path.assign(*input);
+                }
             }},
+            {"ASYNC", "start async execution", [this]{watcher.start(path, Mode::async);}},
             {"STOP", "stop all workers", [this](){watcher.stop();}},
             {"SHOW", "show result of file processing", [this](){
-                std::cout << "Enter file path: ";
-                std::string input;
-                if (!(std::cin >> input)) return;
-                auto v = watcher.get_res(input);
-                if (v.empty()) {
-                    ERROR("no elements found or doesn't exists");
-                    return;
+                if (auto input = get_input("Enter file path: ")) {
+                    auto v = watcher.get_res(*input);
+                    if (v.empty()) {
+                        ERROR("no elements found or doesn't exists");
+                        return;
+                    }
+                    std::cout << "Found:" << '\n';
+                    for (const auto& e : v) {
+                        std::cout << std::left << std::setw(100) << e.text
+                                  << std::setw(10) << "\t" << "line=" << e.line;
+                        if (e.type == Type::Header)
+                            std::cout << std::right << std::setw(10)
+                                      << "\tlevel=" << static_cast<int>(e.level);
+                        std::cout << '\n';
+                    }
                 }
-                std::cout << "Found:" << '\n';
-                for (const auto& e : v) {
-                    std::cout << std::left << std::setw(100) << e.text
-                              << std::setw(10) << "\t" << "line=" << e.line;
-                    if (e.type == Type::Header)
-                        std::cout << std::right << std::setw(10)
-                                  << "\tlevel=" << static_cast<int>(e.level);
-                    std::cout << '\n';
+            }},
+            {"CANCEL", "cancel async processing of a file", [this]() {
+                if (auto input = get_input("Enter file path to cancel: ")) {
+                    watcher.cancel(*input);
+                }
+            }},
+            {"STATUS", "show status of a specific file", [this](){
+                if (auto input = get_input("Enter file path: ")) {
+                    auto s = watcher.get_stat(*input);
+                    if (!s) {
+                        ERROR("file not tracked");
+                        return;
+                    }
+                    std::cout << *input << " : " << status_to_string(*s) << '\n';
                 }
             }},
         }};
@@ -89,6 +104,17 @@ struct ui_handler {
         if (qs[index].handler != nullptr) {
             qs[index].handler();
         }
+    }
+
+    inline std::optional<std::string>
+    get_input(const std::string& msg)
+    {
+        std::cout << msg;
+        std::string input;
+        if (!(std::cin >> input)) {
+            return std::nullopt;
+        }
+        return input;
     }
 };
 
