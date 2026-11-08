@@ -100,3 +100,27 @@ lab4: lab_4/lab4.cpp lab_4/watcher.cpp
 		-o build/lab_4/lab4
 
 	$(call run_doxygen)
+
+lab5: lab_5/lab5.cpp
+	@mkdir -p build/lab_5
+	@mkdir -p build/lab_5/obj
+
+	g++	-Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+		-c lab_2/parser.cpp -o build/lab_5/obj/parser.o
+	g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+		-c lab_2/uploader.cpp -o build/lab_5/obj/uploader.o
+	g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+		-c lab_2/pipe.cpp -o build/lab_5/obj/pipe.o
+	g++	-Wall -Wextra -Ilab_4 -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+		-c lab_4/watcher.cpp -o build/lab_5/obj/watcher.o
+
+	ar rvs build/lab_5/liblabs.a \
+		build/lab_5/obj/parser.o \
+		build/lab_5/obj/uploader.o \
+		build/lab_5/obj/pipe.o \
+		build/lab_5/obj/watcher.o
+
+	g++ -Wall -Wextra -Ilab_2 -Ilab_4 -Ilab_5 -g -DDEBUG_MODE=$(DEBUG) \
+		$^ \
+		-Lbuild/lab_5 -l:liblabs.a \
+		-o build/lab_5/lab5
