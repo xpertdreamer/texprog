@@ -4,8 +4,6 @@
 #include <filesystem>
 #include <ostream>
 
-
-// TODO: check if this is correct
 enum class task_status {
     failed = -1,
     waiting = 0,
@@ -29,6 +27,18 @@ status_to_string(task_status ts)
     }
 
 #undef CASE_STATUS
+}
+
+inline task_status
+map_status(int s)
+{
+    switch (s) {
+        case 2: return task_status::completed;
+        case -1: return task_status::failed;
+        case 3: return task_status::cancelled;
+        case 0: return task_status::waiting;
+        default: return task_status::failed;
+    }
 }
 
 struct Task {

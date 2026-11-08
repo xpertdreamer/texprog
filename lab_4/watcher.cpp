@@ -2,7 +2,10 @@
 #include "pipe.h"
 
 #include "task.h"
+#include <chrono>
 #include <filesystem>
+#include <future>
+#include <memory>
 #include <thread>
 
 // need to be locked only if class field requested
@@ -59,10 +62,11 @@ Watcher::loop()
 }
 
 void
-Watcher::worker()
+Watcher::worker_threads()
 {
     while (run) {
         Task task;
+        std::shared_ptr<std::atomic<bool>> ctrl;
         bool taken = false;
         {
             std::lock_guard l(mutex);
@@ -70,6 +74,7 @@ Watcher::worker()
                 task = queue.pop();
                 auto it = cache.find(task.path);
                 if (it != cache.end() && it->second.second == task_status::waiting) {
+                    ctrl = std::make_shared<std::atomic<bool>>(false);
                     it->second.second = task_status::running;
                     taken = true;
                 }
@@ -81,10 +86,11 @@ Watcher::worker()
             continue;
         }
 
-        auto [element, status] = process(task.path, run);
+        auto [element, status] = process(task.path, run, *ctrl);
         if (!run) return;
 
         std::lock_guard l(mutex);
+        cancels.erase(task.path);
         auto it = cache.find(task.path);
         if (it != cache.end()) {
             it->second.second = (status == -1) ? task_status::failed
@@ -95,7 +101,62 @@ Watcher::worker()
 }
 
 void
-Watcher::start(const stdfs::path& wpath)
+Watcher::worker()
+{
+    switch (mode) {
+        case Mode::threads: worker_threads(); break;
+        case Mode::async: worker_async(); break;
+    }
+}
+
+void
+Watcher::worker_async()
+{
+    while (run) {
+        bool did = false;
+        {
+            std::lock_guard l(mutex);
+            for (auto it = pending.begin(); it != pending.end();) {
+                if (it->future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready) {
+                    auto [element, status] = it->future.get();
+                    cancels.erase(it->path);
+                    auto c = cache.find(it->path);
+                    if (c != cache.end()) {
+                        c->second.second = map_status(status);
+                        c->second.first = std::move(element);
+                    }
+                    it = pending.erase(it);
+                    did = true;
+                } else ++it;
+            }
+        }
+
+        {
+            std::lock_guard l(mutex);
+            while (pending.size() < MXASYNC && !queue.empty()) {
+                Task t = queue.pop();
+                auto it = cache.find(t.path);
+                if (it == cache.end() || it->second.second != task_status::waiting) continue;
+                it->second.second = task_status::running;
+                auto ctrl = std::make_shared<std::atomic<bool>>(false);
+                cancels[t.path] = ctrl;
+
+                pending.push_back({
+                    std::async(std::launch::async, [p = t.path, ctrl, this]{
+                        return process(p, run, *ctrl);
+                    }),
+                    t.path
+                });
+                did = true;
+            }
+        }
+
+        if (!did) std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+}
+
+void
+Watcher::start(const stdfs::path& wpath, Mode m)
 {
     stop();
 
@@ -103,6 +164,7 @@ Watcher::start(const stdfs::path& wpath)
     watch_path = wpath;
     mutex.unlock();
 
+    mode = m;
     run = true;
     workers.reserve(THREADS);
     for (std::size_t i = 0; i < THREADS; ++i) {
@@ -124,8 +186,14 @@ Watcher::stop()
     }
     workers.clear();
 
+    for (auto& p : pending) {
+        if (p.future.valid()) p.future.wait();
+    }
+    pending.clear();
+
     std::lock_guard l(mutex);
     cache.clear();
+    cancels.clear();
     watch_path.clear();
     queue.drop();
 }
@@ -174,4 +242,30 @@ Watcher::drop_queue()
 {
     std::lock_guard l(mutex);
     queue.drop();
+}
+
+void
+Watcher::cancel(const stdfs::path& rpath) {
+    std::lock_guard l(mutex);
+    auto it = cache.find(rpath);
+    if (it == cache.end()) {
+        ERROR("not tracked");
+        return;
+    }
+
+    if (it->second.second == task_status::running) {
+        auto c = cancels.find(rpath);
+        if (c != cancels.end() && c->second) *c->second = true;
+        return;
+    }
+
+    ERROR("nothing to cancel here");
+}
+
+std::optional<task_status>
+Watcher::get_stat(const stdfs::path& p)
+{
+    std::lock_guard l(mutex);
+    auto it = cache.find(p);
+    return it == cache.end() ? std::nullopt : std::optional<task_status>(it->second.second);
 }
