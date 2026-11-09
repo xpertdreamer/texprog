@@ -2,6 +2,7 @@
 #include "watcher.h"
 #include "pipe.h"
 #include "../exceptions.h"
+#include "logger.h"
 
 #include "task.h"
 #include <chrono>
@@ -32,6 +33,7 @@ Watcher::scan()
                 handle_file(e.path());
             } catch (const SizeException& sz) {
                 ERROR("{}", sz.what());
+                fexcept(sz.what());
             }
         }
     }

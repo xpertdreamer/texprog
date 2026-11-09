@@ -45,8 +45,8 @@ class Logger {
         }
 };
 
-void
-LOG(const std::string& msg) {
+inline void
+fexcept(const std::string& msg) {
     Logger::instance().fmt(msg);
 }
 
