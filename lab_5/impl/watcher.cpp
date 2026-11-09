@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <future>
 #include <memory>
+#include <system_error>
 #include <thread>
 
 // need to be locked only if class field requested
@@ -34,7 +35,18 @@ Watcher::scan()
             } catch (const SizeException& sz) {
                 ERROR("{}", sz.what());
                 fexcept(sz.what());
+            } catch (const FileDeletedException& fde) {
+                ERROR("{}", fde.what());
+                fexcept(fde.what());
             }
+        }
+    }
+
+    for (auto it = cache.begin(); it != cache.end(); ++it) {
+        const stdfs::path& in_cache = it->first;
+        if (!stdfs::exists(in_cache) && it->second.second != task_status::deleted) {
+            it->second.second = task_status::deleted;
+            throw FileDeletedException(it->first.string());
         }
     }
 }
@@ -46,8 +58,9 @@ Watcher::handle_file(const stdfs::path& fpath) noexcept(false)
 {
     std::lock_guard l(mutex);
 
-    stdfs::directory_entry e(fpath);
-    if (!e.exists() || !e.is_regular_file()) {
+    std::error_code ec;
+    stdfs::directory_entry e(fpath, ec);
+    if (!e.exists(ec) || !e.is_regular_file(ec)) {
         cache.erase(fpath);
         ERROR("cannot process file: {}", fpath.relative_path().string());
         return;
@@ -76,7 +89,12 @@ void
 Watcher::loop()
 {
     while (run) {
-        scan();
+        try {
+            scan();
+        } catch (const FileDeletedException& fde) {
+            ERROR("{}", fde.what());
+            fexcept(fde.what());
+        }
 
         for (int i = 0; i < 10 && run; ++i)
             std::this_thread::sleep_for(std::chrono::milliseconds(10));

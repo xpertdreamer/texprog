@@ -20,6 +20,7 @@ enum class task_status {
     running = 1,
     completed = 2,
     cancelled,
+    deleted
 };
 
 /**
@@ -38,6 +39,7 @@ status_to_string(task_status ts)
         CASE_STATUS(running);
         CASE_STATUS(completed);
         CASE_STATUS(cancelled);
+        CASE_STATUS(deleted);
         default: return "unknown";
     }
 
@@ -57,6 +59,7 @@ map_status(int s)
         case -1: return task_status::failed;
         case 3: return task_status::cancelled;
         case 0: return task_status::waiting;
+        case 4: return task_status::deleted;
         default: return task_status::failed;
     }
 }
