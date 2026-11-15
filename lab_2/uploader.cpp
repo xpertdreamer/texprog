@@ -1,5 +1,7 @@
 #include "uploader.h"
 #include "util.h"
+#include "exceptions.h"
+
 #include <fstream>
 #include <ios>
 #include <sstream>
@@ -60,11 +62,18 @@ Uploader::upload_stdin()
     return ss.str();
 }
 
+#include <filesystem>>
+namespace stdfs = std::filesystem;
+
 std::streamsize
 Uploader::upload_batch()
 {
     DEBUG("Call uploader::upload_batch");
-    if (!file.is_open()) { ERROR("File not opened!"); return 0; }
+    if (!file.is_open()) {
+        if (!stdfs::exists(_path))
+            throw FileDeletedException(_path);
+        throw PermissionException(_path);
+    }
     file.read(buffer.data(), batch_size);
     std::streamsize count = file.gcount();
     DEBUG("Count=%ld", count);

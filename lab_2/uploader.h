@@ -16,14 +16,21 @@ class Uploader {
         std::ifstream file;
         std::size_t batch_size;
         std::vector<char> buffer;
+        std::string _path;
     public:
         Uploader(const std::string& path, std::size_t size)  {
             DEBUG("Call constructor");
+            _path = path;
             batch_size = size;
             buffer.resize(batch_size);
             file.open(path, std::ios::binary);
             DEBUG("Opened path=%s", path.c_str());
             file.seekg(0, std::ios::beg);
+        }
+
+        const std::string&
+        get_path() {
+            return _path;
         }
 
         const std::vector<char>&

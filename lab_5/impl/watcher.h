@@ -94,7 +94,10 @@ class Watcher {
             stdfs::path path;
         };
 
-        std::vector<pending_result> pending; ///< Async tasks
+        std::vector<pending_result> pending;  ///< Async tasks
+
+        void
+        canc(const stdfs::path& p);
 
     public:
         /**

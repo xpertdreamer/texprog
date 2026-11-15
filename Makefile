@@ -107,9 +107,9 @@ lab5: lab_5/lab5.cpp
 
 	g++	-Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
 		-c lab_2/parser.cpp -o build/lab_5/obj/parser.o
-	g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+	g++ -Wall -Wextra -Ilab_2 -Ilab_5 -DDEBUG_MODE=$(DEBUG) \
 		-c lab_2/uploader.cpp -o build/lab_5/obj/uploader.o
-	g++ -Wall -Wextra -Ilab_2 -DDEBUG_MODE=$(DEBUG) \
+	g++ -Wall -Wextra -Ilab_2 -Ilab_5 -DDEBUG_MODE=$(DEBUG) \
 		-c lab_2/pipe.cpp -o build/lab_5/obj/pipe.o
 	g++	-Wall -Wextra -Ilab_5/impl -Ilab_5 -Ilab_2  -Ilab_4 -DDEBUG_MODE=$(DEBUG) \
 		-c lab_5/impl/watcher.cpp -o build/lab_5/obj/watcher.o
@@ -120,7 +120,8 @@ lab5: lab_5/lab5.cpp
 		build/lab_5/obj/pipe.o \
 		build/lab_5/obj/watcher.o
 
-	g++ -Wall -Wextra -Ilab_5 -Ilab_4 -Ilab_2 -g -DDEBUG_MODE=$(DEBUG) \
+	g++ -Wall -Wextra -std=c++23 -Ilab_5 -Ilab_4 -Ilab_2 -g -DDEBUG_MODE=$(DEBUG) \
 		$^ \
 		-Lbuild/lab_5 -l:liblabs.a \
-		-o build/lab_5/lab5
+		-fsanitize=address -fno-omit-frame-pointer \
+		-o build/lab_5/lab5 -fsanitize=address

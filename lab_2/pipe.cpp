@@ -1,6 +1,8 @@
 #include "pipe.h"
 #include "parser.h"
 #include "uploader.h"
+#include "exceptions.h"
+
 #include <algorithm>
 #include <ios>
 #include <iterator>
@@ -53,5 +55,10 @@ process(const stdfs::path& path, const std::atomic<bool>& run, const std::atomic
         ERROR("io error while reading");
         return {{},-1};
     }
+
+    if (res.size() == 0) {
+        throw WrongFormatException(path.string());
+    }
+
     return {std::move(res), 2};
 }

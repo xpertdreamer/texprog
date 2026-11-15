@@ -1,16 +1,24 @@
-#include "../util.h"
+#include "util.h"
 #include "watcher.h"
 #include "pipe.h"
 #include "../exceptions.h"
 #include "logger.h"
-
 #include "task.h"
-#include <chrono>
+
+#include <exception>
 #include <filesystem>
 #include <future>
 #include <memory>
 #include <system_error>
 #include <thread>
+
+void
+Watcher::canc(const stdfs::path& p) {
+    cancels.erase(p);
+    auto c = cache.find(p);
+    if (c != cache.end()) c->second.second = task_status::cancelled;
+}
+
 
 // need to be locked only if class field requested
 void
@@ -38,15 +46,30 @@ Watcher::scan()
             } catch (const FileDeletedException& fde) {
                 ERROR("{}", fde.what());
                 fexcept(fde.what());
+            } catch (const WrongFormatException& wfe) {
+                ERROR("{}", wfe.what());
+                fexcept(wfe.what());
+            } catch (const PermissionException& pe) {
+                ERROR("{}", pe.what());
+                fexcept(pe.what());
             }
         }
     }
 
-    for (auto it = cache.begin(); it != cache.end(); ++it) {
-        const stdfs::path& in_cache = it->first;
-        if (!stdfs::exists(in_cache) && it->second.second != task_status::deleted) {
-            it->second.second = task_status::deleted;
-            throw FileDeletedException(it->first.string());
+    {
+        std::lock_guard l(mutex);
+        for (auto it = cache.begin(); it != cache.end(); ++it) {
+            if (it->second.second == task_status::deleted ||
+                it->second.second == task_status::cancelled)
+                continue;
+            std::error_code ec2;
+            if (!stdfs::exists(it->first, ec2) && !ec2) {
+                it->second.second = task_status::deleted;
+                const auto msg = "File was deleted from watched directory: "
+                    + it->first.string();
+                fexcept(msg);
+                ERROR("{}", msg.c_str());
+            }
         }
     }
 }
@@ -126,16 +149,27 @@ Watcher::worker_threads()
             continue;
         }
 
-        auto [element, status] = process(task.path, run, *ctrl);
-        if (!run) return;
+        try {
+            auto [element, status] = process(task.path, run, *ctrl);
 
-        std::lock_guard l(mutex);
-        cancels.erase(task.path);
-        auto it = cache.find(task.path);
-        if (it != cache.end()) {
-            it->second.second = (status == -1) ? task_status::failed
-                : task_status::completed;
-            it->second.first = std::move(element);
+            std::lock_guard l(mutex);
+            cancels.erase(task.path);
+            auto it = cache.find(task.path);
+            if (it != cache.end()) {
+                it->second.second = map_status(status);
+                it->second.first = std::move(element);
+            }
+            if (!run) return;
+        } catch(const WrongFormatException& ex) {
+            fexcept(ex.what());
+            ERROR("{}", ex.what());
+            std::lock_guard l(mutex);
+            canc(task.path);
+        } catch (const PermissionException& pe) {
+            fexcept(pe.what());
+            ERROR("{}", pe.what());
+            std::lock_guard l(mutex);
+            canc(task.path);
         }
     }
 }
@@ -158,13 +192,24 @@ Watcher::worker_async()
             std::lock_guard l(mutex);
             for (auto it = pending.begin(); it != pending.end();) {
                 if (it->future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready) {
-                    auto [element, status] = it->future.get();
-                    cancels.erase(it->path);
-                    auto c = cache.find(it->path);
-                    if (c != cache.end()) {
-                        c->second.second = map_status(status);
-                        c->second.first = std::move(element);
+                    try {
+                        auto [element, status] = it->future.get();
+                        cancels.erase(it->path);
+                        auto c = cache.find(it->path);
+                        if (c != cache.end()) {
+                            c->second.second = map_status(status);
+                            c->second.first = std::move(element);
+                        }
+                    } catch (const WrongFormatException& wfe) {
+                        fexcept(wfe.what());
+                        ERROR("{}", wfe.what());
+                        canc(it->path);
+                    } catch (const PermissionException& pe) {
+                        fexcept(pe.what());
+                        ERROR("{}", pe.what());
+                        canc(it->path);
                     }
+
                     it = pending.erase(it);
                     did = true;
                 } else ++it;
@@ -203,6 +248,14 @@ Watcher::start(const stdfs::path& wpath, Mode m)
     mutex.lock();
     watch_path = wpath;
     mutex.unlock();
+
+    std::error_code code;
+    stdfs::directory_iterator check(watch_path, code);
+    if (code) {
+        fexcept(code.message());
+        ERROR("{}", code.message().c_str());
+        return;
+    }
 
     mode = m;
     run = true;
@@ -243,6 +296,14 @@ Watcher::change_directory(const stdfs::path& npath)
 {
     if (!stdfs::exists(npath) || !stdfs::is_directory(npath))
         return false;
+
+    {
+        std::error_code code;
+        stdfs::directory_iterator checker(npath, code);
+        if (code) {
+            throw PermissionException(npath.string(), code.message());
+        }
+    }
 
     {
         std::lock_guard l(mutex);

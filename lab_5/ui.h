@@ -1,11 +1,13 @@
 #ifndef UI_H
 #define UI_H
 
+#include "logger.h"
+#include "util.h"
 #include "task.h"
 #include "tdsqueue.h"
-#include "util.h"
 #include "watcher.h"
 #include "parser.h"
+#include "exceptions.h"
 
 #include <cctype>
 #include <csignal>
@@ -54,12 +56,17 @@ struct ui_handler {
                 }
             }},
             {"EXIT", "exit", [this]() {yes = false;}},
-            {"START", "start watching loop", [this]() {watcher.start(path, Mode::threads);}},
+            {"START", "start watching loop", [this]() { watcher.start(path, Mode::threads); }},
             {"DUMP", "dump current state", [this](){watcher.dump_state();}},
             {"DROP", "drop current queue", [this](){watcher.drop_queue();}},
             {"CHANGE", "change directory being watched", [this](){
                 if (auto input = get_input("Enter relative path to new directory: ")) {
-                    if (watcher.change_directory(*input)) path.assign(*input);
+                    try {
+                        if (watcher.change_directory(*input)) path.assign(*input);
+                    } catch (const PermissionException& pe) {
+                        fexcept(pe.what());
+                        ERROR("{}", pe.what());
+                    }
                 }
             }},
             {"ASYNC", "start async execution", [this]{watcher.start(path, Mode::async);}},

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <mutex>
 #include <format>
+#include <chrono>
 
 class Logger {
     private:
