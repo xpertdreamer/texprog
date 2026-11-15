@@ -47,6 +47,11 @@ class WrongFormatException : public std::exception {
         std::string _msg;
     public:
         WrongFormatException(const std::string& p, const std::string& msg="File doesn't matched format: ") : _msg(msg + p) {}
+
+        const char*
+        what() const noexcept override {
+            return _msg.c_str();
+        }
 };
 
 #endif
