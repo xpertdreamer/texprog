@@ -9,6 +9,7 @@
 - [Laboratory Work 2](#laboratory-work-2)
 - [Laboratory Work 3](#laboratory-work-3)
 - [Laboratory Work 4](#laboratory-work-4)
+- [Laboratory Work 5](#laboratory-work-5)
 
 ## Build systems
 
@@ -140,3 +141,9 @@ List of targets:
   - <https://stackoverflow.com/questions/735204/convert-a-string-in-c-to-upper-case>
   - <https://en.cppreference.com/cpp/container/queue>
   - <https://stackoverflow.com/questions/9615706/how-can-i-handle-interrupt-signal-and-call-destructor-in-c>
+
+## Laboratory Work 5
+### References:
+
+  - <https://www.studyplan.dev/pro-cpp/exception-types#creating-custom-exception-types>
+  - I wanna cry looking at this code
